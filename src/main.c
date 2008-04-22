@@ -15,9 +15,9 @@ Rr   * r;
 void
 ParseArgs(int argc, char* argv[])
 {
-    a = ArgsParse(argc, argv);
+    a = ArgsCreate(argc, argv);
     if (!a)
-        error(1, errno, "ArgsParse(...)");
+        error(1, errno, "ParseArgs(...)");
 
 	if (ArgsIsDebug(a))
 		ArgsPrint(a);

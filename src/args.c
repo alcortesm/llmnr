@@ -45,7 +45,7 @@ InitArgs(Args* a)
 
 // exits on errors
 Args *
-ArgsParse(int argc, char** argv) {
+ArgsCreate(int argc, char** argv) {
 	if (argc < 1) {
         errno = EINVAL;
         return NULL;
@@ -162,8 +162,64 @@ ArgsPrint(Args* a)
 }
 
 int
-ArgsDebug(Args * a) {
-    if (!a)
-        return 0;
+ArgsGetPort(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return -1;
+    }
+    return (a->port); 
+}
+
+int
+ArgsIsResponder(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return -1;
+    }
+    return (a->isresponder); 
+}
+
+char *
+ArgsGetConfigFile(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return NULL;
+    }
+    return (a->configfile); 
+}
+
+int
+ArgsIsIteractive(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return -1;
+    }
+    return (a->interactive); 
+}
+
+int
+ArgsIsDebug(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return -1;
+    }
     return (a->debug); 
+}
+
+char *
+ArgsGetName(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return NULL;
+    }
+    return (a->name); 
+}
+
+char *
+ArgsGetType(Args * a) {
+    if (!a) {
+        errno = EINVAL;
+        return NULL;
+    }
+    return (a->type); 
 }
