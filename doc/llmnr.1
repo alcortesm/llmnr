@@ -1,0 +1,113 @@
+.\" groff -t -e -mandoc -Tascii llmnr.1 | col -bx | less
+.\" groff -t -e -mandoc -Thtml llmnr.1 > llmnr.html
+.\" groff -t -e -mandoc -Tps llmnr.1 | ps2pdf - > llmnr.pdf
+.TH LLMNR 1  "October 16, 2007" "" "User Commands"
+.SH NAME
+\fBllmnr\fR \- simple, incomplete and incompatible sender and responder of
+.SM RFC
+4795
+.SH SYNOPSIS
+.B llmnr
+.I [\-p port] [\-r file] [\-i] [-d] [name [type]]
+.SH DESCRIPTION
+.B Llmnr
+is a partial implementation of RFC 4795. It can be run as a sender or as a responder.
+If a \fIname\fR is specified, \fBllmnr\fR sends a request for that name. If a \fItype\fR
+is specified it is used as the type of the request, if not, \fBA\fR is used.
+The Output sintax is the same as the configuration file (see below).
+.SH OPTIONS
+.TP
+\fB\-p\fR \fI<port>\fR
+\fIPort\fR is the port to use instead of 5355.
+.TP
+\fB\-r\fR \fI<file>\fR
+Requests \fBllmnr\fR to act as a responder. \fIFile\fR is the configuration
+file. See bellow for the configuration syntax.
+.TP
+\fB\-i\fR
+Interactive mode. The program waits on a prompt for user commands.
+Commands has the same syntax as the program arguments and ends in a newline.
+Commands are resolved in the background, returning the control to the prompt inmediately.
+Output from commands has the same syntax as the configuration file (see below).
+To exit interactive mode send an \fBEOF\fR.
+.TP
+\fB\-d\fR
+Debug mode. Developers must use this mode to isolate users from theirs chatty debugging outputs.
+.SH CONFIGURATION FILE SYNTAX
+The configuration file has one DNS RR per line. Lines begining with \fI#\fR are ignored.
+RR syntax is NAME, CLASS, TYPE and RDATA separated by any number of spaces or tabs.
+Supported types are \fISOA\fR, \fINS\fR, \fIA\fR, \fIPTR\fR, \fIMX\fR and \fICNAME\fR.
+.SH EXAMPLES
+.TP
+Domain name resolution:
+.nf
+.B ; llmnr www.google.com
+www.l.google.com.       IN      A       64.233.183.99
+www.l.google.com.       IN      A       64.233.183.104
+www.l.google.com.       IN      A       64.233.183.103
+www.l.google.com.       IN      A       64.233.183.147
+.fi
+.PP
+.TP
+Mail server resolution
+.nf
+.B ; llmnr it.uc3m.es MX
+it.uc3m.es.             IN      MX      6 smtp01.uc3m.es.
+it.uc3m.es.             IN      MX      6 smtp02.uc3m.es.
+it.uc3m.es.             IN      MX      6 smtp03.uc3m.es.
+it.uc3m.es.             IN      MX      9 mail.rediris.es.
+it.uc3m.es.             IN      MX      5 smtp.uc3m.es.
+.fi
+.PP
+.TP
+Responder daemon:
+.nf
+.B ; llmnr -r llmnr.conf
+;
+.fi
+.TP
+Configuration file example:
+.nf
+; cat llmnr.conf
+it.uc3m.es IN A 163.117.15.1
+it.uc3m.es IN MX 5 smtp.uc3m.es.
+it.uc3m.es IN MX 9 mail.rediris.es.
+.fi
+.TP
+Interactive mode on port 6666:
+.nf
+.B ; llmnr -p 6666 -i
+llmnr> 
+.fi
+.PP
+There is a space after ">".
+.SH DIAGNOSTIC
+\fBLlmnr\fR exit status will be 0 if the last request was correctly resolved, 1 if not and -1 on error.
+\fBLlmnr\fR prints to standard output traces of every llmnr request it sends, of every response it recevies and each time
+a RR conflict is detected. The following sintax is used for each type of trace:
+
+.nf
+#[\fItimestamp\fR] query sent [id:\fIID\fR]
+#[\fItimestamp\fR] answer received from \fIIP\fR [id:\fIID\fR]
+#[\fItimestamp\fR] resource record \fIRR\fR conflict with \fIIP\fR
+.fi
+
+\fITimestamps\fR use the RFC 3339 format, as in:
+
+.nf
+; date --rfc-3339=seconds
+2007-10-16 12:08:02+02:00
+.fi
+
+\fIID\fR is the request id, \fIIP\fR is an ip address in dotted-decimal notation and \fIRR\fR is DNS resource record name.
+.SH AUTHOR
+Some forgotten UC3M student.
+.SH SEE ALSO
+.BR services (5),
+.BR date (1),
+.BR named (8)
+.SH STANDARDS
+.B Llmnr
+is based on  RFC 4795, but it is an incomplete and incompatible implementation made for didactic purposes.
+.SH BUGS
+More than you can imagine!

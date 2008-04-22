@@ -1,0 +1,488 @@
+<html><head><title>Práctica Redes de Ordenadores II - Curso 2007/08</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="index_files/estilo.css" type="text/css"></head><body topmargin="1" leftmargin="0" rightmargin="0" bgcolor="#ffffff" marginheight="1" marginwidth="0" text="#000000">
+<table bgcolor="#000000" border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody><tr>
+    <td>
+      <table border="0" cellpadding="0" cellspacing="1" height="50" width="100%">
+        <tbody><tr bgcolor="#ffffff"> 
+          <td rowspan="3" width="55"><a href="http://www.uc3m.es/"><img src="index_files/logouc3m3.gif" alt="Home UC3M" border="0" height="49" width="59"></a></td>
+          <td height="22" width="2000"> 
+            <div align="center"><img src="index_files/titular3.gif" height="22"></div>
+          </td>
+          <td rowspan="3" width="55"><a href="http://campusglobal.uc3m.es/asignaturas/4786/rrooII0708/index.html"><img src="index_files/logoit3.gif" alt="Home IT" border="0" height="49" width="58"></a></td>
+        </tr>
+        <tr> 
+          <td bgcolor="#bbc7fb" height="1" width="2000"><img src="index_files/spacer.gif"></td>
+        </tr>
+      </tbody></table>
+    </td>
+  </tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+  <tbody><tr>
+    <td>
+      <center><h3>Implementación de RFC 4795: Linklocal Multicast Name Resolution (LLMNR)</h3></center>
+    </td>
+  </tr>
+</tbody></table>
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+<tbody><tr>
+<td bgcolor="#000033">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr bgcolor="#cccccc">
+    <td bgcolor="#ccd0d6" height="13"><b class="menut">&nbsp;<font color="#000033">INTRODUCCIÓN</font><a name="2"></a></b></td>
+ <td bgcolor="#ccd0d6" height="13"> <div align="right"><img src="index_files/degradtabla2.jpg" height="15" width="236"></div>
+ </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="2" cellspacing="0" width="95%">
+<tbody><tr>
+<td>
+<br>
+
+<p>
+El objetivo de esta práctica es desarrollar una implementación del
+protocolo <b>RFC 4795: Linklocal Multicast Name Resolution</b>
+(LLMNR), que permite la resolución de nombres en escenarios en los que
+no es posible utilizar DNS, bien porque no existe ningún servidor o
+porque no es posible alcanzarlo. Escenarios de este tipo serán
+habituales gracias a la proliferación de dispositivos limitados y al
+uso de protocolos de comunicación de corto alcance, que permiten que
+los dispositivos formen redes sin infraestructura, denominadas redes
+ad-hoc. 
+</p>
+
+<p>
+LLMNR soporta los mismos formatos, tipos y clases de registros
+de recurso que DNS, y los mismos paquetes, pero utiliza un puerto
+distinto y maneja una caché de registros de recursos distinta.
+</p>
+
+<p>
+Además de las clases prácticas, se impartirá una clase teórica sobre
+la práctica en la que se explicarán brevemente conceptos sobre
+programación con sockets y el protocolo LLMNR. Esta clase teórica será
+el día 24 de Octubre en el aula de teoría, 2.3.B01.
+</p>
+
+</td>
+</tr>
+<tr>
+<td colspan="4" class="peq">
+<div align="right"><a href="#"><img src="index_files/flechaup.gif" border="0" height="18" width="12"></a></div>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+<tbody><tr>
+<td bgcolor="#000033">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr bgcolor="#cccccc">
+    <td bgcolor="#ccd0d6" height="13"><b class="menut">&nbsp;<font color="#000033">OBJETIVOS</font><a name="2"></a></b></td>
+ <td bgcolor="#ccd0d6" height="13"> <div align="right"><img src="index_files/degradtabla2.jpg" height="15" width="236"></div>
+ </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="2" cellspacing="0" width="95%">
+<tbody><tr>
+<td>
+<br>
+
+<p>
+Los objetivos de la práctica son los siguientes:
+</p>
+
+<ol>
+<li>Enfrentarse a la implementación de un protocolo de nivel de
+aplicación real, partiendo de su especificación original.</li>
+
+<li>Fijar los conocimientos el protocolo DNS estudiado en la parte
+teórica de la asignatura, ya que LLMNR está basado en él.</li>
+
+<li>Profundizar en el conocimiento de los protocolos estudiados en las
+clases teóricas.</li>
+
+<li>Adquirir conocimientos de programación con sockets TCP, UDP y
+Multicast</li>
+</ol>
+
+
+</td>
+</tr>
+<tr>
+<td colspan="4" class="peq">
+<div align="right"><a href="#"><img src="index_files/flechaup.gif" border="0" height="18" width="12"></a></div>
+</td>
+</tr>
+</tbody></table>
+<br>
+<br>
+
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+<tbody><tr>
+<td bgcolor="#000033">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr bgcolor="#cccccc">
+    <td bgcolor="#ccd0d6" height="13"><b class="menut">&nbsp;<font color="#000033">ENUNCIADO</font><a name="2"></a></b></td>
+ <td bgcolor="#ccd0d6" height="13"> <div align="right"><img src="index_files/degradtabla2.jpg" height="15" width="236"></div>
+ </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="2" cellspacing="0" width="95%">
+<tbody><tr>
+<td>
+<br>
+
+<p>
+En la práctica se va a implementar una versión simplificada de la RFC,
+para ello hemos tachado en el texto original aquellas partes que no
+deben tenerse en cuenta. Esta versión de la RFC está disponible en el
+siguiente enlace <a href="http://campusglobal.uc3m.es/asignaturas/4786/rrooII0708/practica/RFC4795_%20RROOII.htm">RFC 4795
+simplificada</a>.
+</p>
+
+<p>
+El lenguaje de desarrollo debe ser <b>lenguaje C</b> sobre sistema
+operativo <b>Linux</b> y <b>debe funcionar en los ordenadores de los
+laboratorios docentes de Ingeniería Telemática</b>, donde se realizará
+la corrección presencial (existen tres máquinas a las que os podéis
+conectar de forma remota (<tt>ssh</tt>):
+<tt>monitor01.lab.it.uc3m.es</tt>, <tt>monitor02.lab.it.uc3m.es</tt> y
+<tt>monitor03.lab.it.uc3m.es</tt>).
+</p>
+
+<p>
+A continuación se listan algunas consideraciones que se deben tener en
+cuenta en la realización de la práctica:
+</p>
+
+<ul>
+
+<li><b>Formatos de entrada y salida</b>: el ejecutable debe llamarse
+<tt>llmnr</tt> y debe soportar los siguientes parámetros de entrada:</li>
+
+<pre>llmnr [-p port] [-r file] [-i] [-d] [name [type]]
+</pre>
+
+<ul>
+  <li><tt>-p port</tt>: puerto que se utilizará en vez del 5355
+  (puerto por defecto).</li>
+
+  <li><tt>-r file</tt>: indica a <tt>llmnr</tt> que actúe como
+  <i>responder</i>. <tt>file</tt> es el fichero de configuración. Este
+  fichero tiene un Registro de Recurso (RR) DNS por línea. Las líneas
+  que comienzan con el carácter <tt>#</tt> serán ignoradas. La
+  sintaxis de los RR es <tt>NAME</tt>, <tt>TTL</tt>, <tt>CLASS</tt>,
+  <tt>TYPE</tt> y <tt>RDATA</tt> separados por cualquier número de
+  espacios o tabuladores. Los tipos de RR soportados son <tt>SOA</tt>,
+  <tt>NS</tt>, <tt>A</tt>, <tt>PTR</tt>, <tt>MX</tt> y
+  <tt>CNAME</tt>. Ver los ejemplos que se indican al final de este
+  apartado. Notar que el
+  <i>responder</i> debe atender varias consultas simultáneamente.</li>
+
+  <li><tt>-i</tt>: modo interactivo. El programa debe mostrar un
+  prompt al usuario para poder ejecutar consultas utilizando
+  exactamente la misma sintaxis que en los argumentos del programa,
+  finalizando con un fin de línea. Las consultas serán resueltas en
+  background, devolviendose el control al usuario inmediantamente. La
+  salida debe seguir la misma sintaxis que el fichero de configuración
+  indicado anteriormente. EOF provocará la finalización de este modo.
+
+  </li><li><tt>-d</tt>: modo de depuración. Los desarrolladores deben
+  utilizar este modo para aislar a los usuarios de los mensajes de
+  salida de depuración que hayan implementado.</li>
+</ul>
+
+<br><br>
+
+<li><b>Ejemplos</b>:</li><br><br>
+
+<ul>
+  <li>Resolución de un nombre de dominio (tipo por defecto A):</li>
+
+  <pre>  ; llmnr www.google.com
+  
+  www.l.google.com.       200      IN      A       64.233.183.99
+
+  www.l.google.com.       200      IN      A       64.233.183.104
+
+  www.l.google.com.       200      IN      A       64.233.183.103
+
+  www.l.google.com.       200      IN      A       64.233.183.147
+  </pre>
+
+  <li>Resolución de un servidor de correo:</li>
+
+  <pre>  ; llmnr it.uc3m.es MX
+  
+  it.uc3m.es.             100     IN      MX      6 smtp01.uc3m.es.
+
+  it.uc3m.es.             100     IN      MX      6 smtp02.uc3m.es.
+
+  it.uc3m.es.             100     IN      MX      6 smtp03.uc3m.es.
+
+  it.uc3m.es.             100     IN      MX      9 mail.rediris.es.
+
+  it.uc3m.es.             100     IN      MX      5 smtp.uc3m.es.
+  </pre>
+
+  <li>Lanzar un <i>responder</i>:</li>
+
+  <pre>  ; llmnr -r llmnr.conf
+
+  </pre>
+
+  <li>Ejemplo de fichero de configuración:</li>
+
+  <pre>  ; cat llmnr.conf
+
+  it.uc3m.es 200   IN A 163.117.15.1
+
+  it.uc3m.es 100   IN MX 5 smtp.uc3m.es.
+
+  it.uc3m.es 100   IN MX 9 mail.rediris.es.
+  </pre>
+
+  <li>Modo interactivo en el puerto 6666:</li>
+
+  <pre>  ; llmnr -p 6666 -i
+
+  llmnr&gt;
+  </pre>
+  Nota: debe existir un espacio después de <tt>&gt;</tt>.
+
+</ul>
+
+<br><br>
+
+<li><b>Trazas</b>: es obligatorio que el programa muestre trazas que
+puedan permitir el seguimiento de la ejecución. Estas trazas se deben
+mostrar por la salida estándar. El estado de salida de <tt>llmnr</tt>
+debe ser <tt>0</tt> si la última consulta se resolvió correctamente,
+<tt>1</tt> si no y <tt>-1</tt> si se produce un error. Estas trazas
+son las siguientes:
+
+<ul>
+<li>Cada vez que se recibe un nuevo mensaje:</li>
+
+<pre>#"["timestamp"] answer received from: " IP "[id:" ID"]". 
+</pre>
+
+<li>Cada vez que se envía un nuevo mensaje:</li>
+
+<pre>#"["timestamp"] query sent: [id:" ID"]"
+</pre>
+
+<li>En caso de detectar un conflicto en un RR:</li>
+
+<pre>#"["timestamp"] resource record " RR " conflict with " IP 
+</pre>
+
+<p>
+Siendo:
+</p>
+
+<ul>
+  <li><tt>timestamp</tt>: el tiempo del sistema, siguiendo el formato
+  establecido en la RFC3339:</li>
+
+  <pre>  ; date --rfc-3339=seconds
+
+  2007-10-16 12:08:02+02:00
+  </pre>
+
+  <li><tt>ID</tt>: campo ID del paquete LLMNR.</li>
+
+  <li><tt>IP</tt>: dirección IP de la máquina desde la que se recibe
+  el mensaje.</li>
+
+  <li><tt>RR</tt>: valor del RR del que se comprueba la unicidad.</li>  
+</ul>
+
+<br><br>
+
+<li><b>Registros de recursos utilizados por el <tt>responder</tt>
+LLMNR</b>: En la página 4 de la RFC se indica que <i>This document
+does not specify how names are chosen or configured. This may occur
+via any mechanism, including DHCPv4 [RFC2131] o DHCPv6
+[RFC3315]</i>. En esta práctica, la configuración será realizada
+mediante un fichero de configuración, cuyo formato se ha indicado
+anteriormente (apartado formatos de entrada y salida).</li>
+
+<br><br>
+
+<li><b>Consideraciones sobre cachés</b>: la implementación de la caché
+en el sender será opcional, y podrá subir hasta un punto extra como
+máximo en la nota final.</li>
+
+<br><br>
+
+<li><b>Consideraciones sobre temporizadores y timeouts</b>: se
+utilizarán siempre los valores "RECOMMENDED" de la RFC.</li>
+</ul>
+
+</li></ul>
+
+<p>
+Se ha creado un página de manual para la implementanción propuesta en
+esta práctica de <tt>llmnr</tt>, que resume la información de formatos de entrada y
+salida y trazas, podéis descargarosla en <a href="http://it.uc3m.es/alcortes/asignaturas/iro2/man/llmnr.1">http://it.uc3m.es/alcortes/asignaturas/iro2/man/llmnr.1</a>
+y consultarla en formato HTML en <a href="http://campusglobal.uc3m.es/asignaturas/4786/rrooII0708/practica/llmnrmanpage.htm">llmnrmanpage.htm</a>.
+</p>
+
+</td>
+</tr>
+<tr>
+<td colspan="4" class="peq">
+<div align="right"><a href="#"><img src="index_files/flechaup.gif" border="0" height="18" width="12"></a></div>
+</td>
+</tr>
+</tbody></table>
+<br>
+
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+<tbody><tr>
+<td bgcolor="#000033">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr bgcolor="#cccccc">
+    <td bgcolor="#ccd0d6" height="13"><b class="menut">&nbsp;<font color="#000033">EVALUACIÓN</font><a name="2"></a></b></td>
+ <td bgcolor="#ccd0d6" height="13"> <div align="right"><img src="index_files/degradtabla2.jpg" height="15" width="236"></div>
+ </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="2" cellspacing="0" width="95%">
+<tbody><tr>
+<td>
+
+La evaluación de la práctica se realizará de forma presencial y su
+nota tendrá un <b>peso del 40%</b> sobre la nota final de la
+asignatura. Para que se haga media con el examen teórico debe
+obtenerse una <b>nota superior o igual a 5</b>. La nota de la
+práctica, siempre que esté aprobada, se mantendrá para la convocatoria
+de Septiembre de 2008. Además, en caso de aprobarse en la convocatoria
+de Febrero, esta nota podrá conservarse hasta el siguiente curso
+académico 2008/09.
+
+<h3>Fechas importantes</h3>
+<ul>
+<li>24 de Octubre de 2007: Clase teórica sobre LLMNR y el API de
+socket.</li><br>
+
+<li>31 de Octubre, 7, 14, 21 y 28 de Noviembre de 2007 y 9, 16 y 23 de Enero de 2008:
+Clases prácticas en los laboratorios 7.0.J02/03 (Edificio Juan Benet).</li><br>
+
+<li><b>28 de Enero de 2008</b>: Entrega de la práctica a través de Aula
+Global.</li><br>
+
+<li>7 de Febrero de 2008: Corrección presencial en el laboratorio.</li><br>
+</ul>
+
+</td>
+</tr>
+<tr>
+<td colspan="4" class="peq">
+<div align="right"><a href="#"><img src="index_files/flechaup.gif" border="0" height="18" width="12"></a></div>
+</td>
+</tr>
+</tbody></table>
+<br>
+
+
+
+<table align="center" border="0" cellpadding="1" cellspacing="0" width="95%">
+<tbody><tr>
+<td bgcolor="#000033">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr bgcolor="#cccccc">
+    <td bgcolor="#ccd0d6" height="13"><b class="menut">&nbsp;<font color="#000033">ENLACES</font><a name="2"></a></b></td>
+ <td bgcolor="#ccd0d6" height="13"> <div align="right"><img src="index_files/degradtabla2.jpg" height="15" width="236"></div>
+ </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+<br>
+<table align="center" border="0" cellpadding="2" cellspacing="0" width="95%">
+<tbody><tr>
+<td>
+
+<h4>FAQ</h4>
+<ul>
+<li><a href="http://www.it.uc3m.es/alcortes/asignaturas/iro2/faq/faq.html">Preguntas más frecuentes sobre la práctica</a></li>
+</ul>
+
+<h4>RFC</h4>
+<ul>
+<li><a href="http://www.ietf.org/rfc/rfc1034.txt">RFC 1034</a> "Domain
+names - concepts and facilities". P.V. Mockapetris. Nov. 1987.</li>
+<li><a href="http://www.ietf.org/rfc/rfc1035.txt">RFC
+1035</a> "Domain names - implementation and
+specification". P.V. Mockapetris. Nov. 1987.</li>
+</ul>
+
+<h4>Libros</h4>
+<ul>
+<li>P. Albitz and C. Liu: "DNS and BIND". 4 Ed. O'Reilly&amp;Associates,
+2001.(L/S 004.7 LIU)</li>
+<li>
+W. R. Stevens: "Unix network programming".Volume 1.Networking APIs-Sockets and XTI 
+ (L/S 004.451.9 UNIX STE )
+</li>
+</ul>
+
+<h4>Información sobre sockets</h4>
+<ul>
+
+<li><a href="http://www.beej.us/guide/bgnet/output/html/singlepage/bgnet.html">Beej's Guide to Network Programming</a>
+existe una versión en castellano en <a href="http://www.arrakis.es/%7Edmrq/beej/">http://www.arrakis.es/~dmrq/beej/</a></li>
+
+<li><a href="http://www.gnu.org/software/libc/manual/html_node/Sockets.html">http://www.gnu.org/software/libc/manual/html_node/Sockets.html</a></li>
+
+</ul>
+
+
+
+</td>
+</tr>
+<tr>
+<td colspan="4" class="peq">
+<div align="right"><a href="#"><img src="index_files/flechaup.gif" border="0" height="18" width="12"></a></div>
+</td>
+</tr>
+</tbody></table>
+<br>
+<br>
+<br>
+<br>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="97%">
+  <tbody><tr> 
+    <td background="index_files/fondomenu.jpg"> 
+      <div align="center"> <span class="menut"><a href="http://karajan.it.uc3m.es:8081/CR">inicio</a> 
+        | <a href="http://karajan.it.uc3m.es:8081/CR/TablonCR">tablón</a>| <a href="mailto:celeste@it.uc3m.es,mvalls@it.uc3m.es">contacta</a></span> 
+      </div>
+    </td>
+  </tr>
+</tbody></table>
+</body></html>
