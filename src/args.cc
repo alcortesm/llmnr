@@ -30,6 +30,29 @@ Args::parse(int argc, char** argv)
     string       name = "";
     string       type = "";
 
+    if (argc < 1) {
+        return 0;
+    }
+
+    if (argv == 0) {
+        return 0;
+    }
+
+    int i;
+    for (i=0; i<argc; i++) {
+        if (!argv[i]) {
+            return 0;
+        }
+    }
+
+    port = argc;
+    configFilePath.append(argv[0]);
+    for (int i=1; i<argc; i++) {
+        if (i!=1)
+            name.append(", ");
+        name.append(argv[i]);
+    }
+
     Args * args = new Args(port,
             responder,
             configFilePath,
@@ -44,6 +67,12 @@ void
 Args::print() const
 {
     std::cout << "args.port = " << d_port << std::endl ;
+    std::cout << "args.responder = " << d_responder << std::endl ;
+    std::cout << "args.configFilePath = " << d_configFilePath << std::endl ;
+    std::cout << "args.interactive = " << d_interactive << std::endl ;
+    std::cout << "args.debug = " << d_debug << std::endl ;
+    std::cout << "args.name = " << d_name << std::endl ;
+    std::cout << "args.type = " << d_type << std::endl ;
 }
 
 int
@@ -56,7 +85,7 @@ Args::responder() const {
     return d_responder;
 }
 
-string const
+string const &
 Args::configFilePath() const {
     return d_configFilePath;
 }
@@ -71,12 +100,12 @@ Args::debug() const {
     return d_debug;
 }
 
-string const
+string const &
 Args::name() const {
     return d_name;
 }
 
-string const
+string const &
 Args::type() const {
     return d_type; 
 }

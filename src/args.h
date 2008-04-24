@@ -25,16 +25,16 @@ public:
          std::string  const name,
          std::string  const type);
 
-    static Args * parse(int const argc, char ** const argv);
-    void          print() const;
+    int                 port()           const;
+    bool                responder()      const;
+    std::string const & configFilePath() const;
+    bool                interactive()    const;
+    bool                debug()          const;
+    std::string const & name()           const;
+    std::string const & type()           const;
 
-    int               port()           const;
-    bool              responder()      const;
-    std::string const configFilePath() const;
-    bool              interactive()    const;
-    bool              debug()          const;
-    std::string const name()           const;
-    std::string const type()           const;
+    void                print() const;
+    static Args *       parse(int const argc, char ** const argv);
 };
 
 #endif
