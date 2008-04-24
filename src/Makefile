@@ -1,11 +1,11 @@
 llmnr: args.o main.o
-	g++ -Wall -I. args.o main.o -o llmnr
+	g++ -Wall args.o main.o -o llmnr
 
-args.o: args.cc include/args.h
-	g++ -Wall -I. args.cc -c
+args.o: args.cc args.h
+	g++ -Wall args.cc -c
 
-main.o: main.cc include/args.h
-	g++ -Wall -I. main.cc -c
+main.o: main.cc args.h
+	g++ -Wall main.cc -c
 
 clean:
 	- rm -rf *.o
