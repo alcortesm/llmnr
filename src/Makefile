@@ -1,30 +1,12 @@
-DEPS= args.h rr.h
-SRCS= args.c rr.c main.c
-BIN=llmnr
-MAN=llmnr.1
+llmnr: args.o main.o
+	g++ -Wall -I. args.o main.o -o llmnr
 
+args.o: args.cc include/args.h
+	g++ -Wall -I. args.cc -c
 
-OBJS=$(SRCS:.c=.o)
-CC=gcc
-CFLAGS=-pthread -Wall -g
-
-
-
-.PHONY: install clean nuke
-
-install: $(BIN)
-	- cp -f $(BIN) ~/bin/
-	- cp -f $(MAN) ~/man/man1/
-
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-$(BIN): $(OBJS)
-	gcc -o $@ $^ $(CFLAGS)
+main.o: main.cc include/args.h
+	g++ -Wall -I. main.cc -c
 
 clean:
-	- rm -f *.o *~ core $(BIN)
-
-nuke: clean
-	- rm -f ~/bin/$(BIN)
-	- rm -f ~/man/man1/$(MAN)
+	- rm -rf *.o
+	- rm -rf llmnr

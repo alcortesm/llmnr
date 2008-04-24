@@ -1,5 +1,5 @@
-#ifndef LLMNR_H
-#define LLMNR_H
+#ifndef _LLMNR_H
+#define _LLMNR_H
 enum {
 	DEF_PORT = 5355, /* RFC */
 	MIN_PORT = 1,
