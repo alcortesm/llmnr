@@ -4,11 +4,11 @@ using std::string;
 
 Args::Args(unsigned int const port,
            bool         const responder,
-           string       const configFilePath,
+           string       const &configFilePath,
            bool         const interactive,
            bool         const debug,
-           string       const name,
-           string       const type)
+           string       const &name,
+           string       const &type)
 :
     d_port(port),
     d_responder(responder),

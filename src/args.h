@@ -19,11 +19,11 @@ public:
 
     Args(unsigned int const port,
          bool         const responder,
-         std::string  const configFilePath,
+         std::string  const &configFilePath,
          bool         const interactive,
          bool         const debug,
-         std::string  const name,
-         std::string  const type);
+         std::string  const &name,
+         std::string  const &type);
 
     static Args *       parse(int const argc, char ** const argv);
 
