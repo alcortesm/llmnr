@@ -27,7 +27,6 @@ main(int argc, char ** argv)
     
     delete argsp;
     
-    // TODO: this should fail!!!!!!!
     std::cout << "argsp->name() = " << argsp->name() << std::endl;
     
 }
