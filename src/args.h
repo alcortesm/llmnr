@@ -1,5 +1,5 @@
-#ifndef _ARGS_H
-#define _ARGS_H
+#ifndef INCLUDED_ARGS
+#define INCLUDED_ARGS
 
 #include <string>
 #include <iostream>
