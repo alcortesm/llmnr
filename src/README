@@ -1,0 +1,3 @@
+Run make to compile.
+
+Uses libstdc++ and libc for the getopt (from POSIX).

@@ -1,14 +1,16 @@
 #include "args.h"
+#include <getopt.h>
+#include <cstdlib>
 
 using std::string;
 
-Args::Args(unsigned int const port,
-           bool         const responder,
-           string       const &configFilePath,
-           bool         const interactive,
-           bool         const debug,
-           string       const &name,
-           string       const &type)
+Args::Args(unsigned int const   port,
+           bool         const   responder,
+           string       const & configFilePath,
+           bool         const   interactive,
+           bool         const   debug,
+           string       const & name,
+           string       const & type)
 :
     d_port(port),
     d_responder(responder),
@@ -19,58 +21,116 @@ Args::Args(unsigned int const port,
     d_type(type)
 {}
 
+void
+usage(void) {
+	std::cerr << "Usage:" << std::endl ;
+	std::cerr << "	llmnr [-p port] [-r file] [-i] [-d] [name [type]]"
+		<< std::endl ;
+	std::cerr << MIN_PORT << " <= port <= " << MAX_PORT << std::endl;
+	exit(EXIT_FAILURE);
+}
+	
 Args *
 Args::parse(int argc, char** argv)
 {
     unsigned int port = DEF_PORT;
     bool         responder = false;
-    string       configFilePath = "";
+    string       configFilePath;
     bool         interactive = false;
     bool         debug = false;
-    string       name = "";
-    string       type = "";
+    string       name;
+    string       type;
 
-    if (argc < 1) {
-        return 0;
-    }
+    if (argc < 1)
+    	usage();
 
-    if (argv == 0) {
-        return 0;
-    }
 
-    int i;
-    for (i=0; i<argc; i++) {
-        if (!argv[i]) {
-            return 0;
-        }
-    }
+	if (argv == 0)
+		usage();
 
-    port = argc;
-    configFilePath.append(argv[0]);
-    for (int i=1; i<argc; i++) {
-        if (i!=1)
-            name.append(", ");
-        name.append(argv[i]);
-    }
+	for (int i=0; i<argc; i++) {
+		if (!argv[i])
+			usage();
+	}
+	
 
-    Args * args = new Args(port,
+	char c;
+	while (1) {
+		opterr = 0; /* don't print errors */
+		c = getopt(argc, argv, "p:r:di");
+		if (c == -1) /* end of options */
+			break;
+		
+		switch (c) {
+		case 'p':
+			port = atoi(optarg);
+			if (port < MIN_PORT || port > MAX_PORT)
+				usage();
+			break;
+
+		case 'r':
+			responder = true;
+			if (optarg)
+				configFilePath.append(optarg);
+			break;
+
+		case 'd':
+			debug = true;
+			break;
+
+		case 'i':
+			interactive = true;
+			break;
+
+		case '?': /* error found */
+			usage();
+			break;
+
+		default:
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (argc - optind > 2) /* more than 2 arguments */
+		usage();
+		
+	if (optind < argc)
+		name.append(argv[optind++]);
+
+	if (optind < argc)
+		type.append(argv[optind]);
+
+    return new Args(port,
             responder,
             configFilePath,
             interactive,
             debug,
             name,
             type);
-    return args;
 }
 
 void
 Args::print() const
 {
     std::cout << "args.port = " << d_port << std::endl ;
-    std::cout << "args.responder = " << d_responder << std::endl ;
+    
+    if (d_responder == true)
+    	std::cout << "args.responder = " << "true" << std::endl ;	
+    else
+    	std::cout << "args.responder = " << "false" << std::endl ;
+    
     std::cout << "args.configFilePath = " << d_configFilePath << std::endl ;
-    std::cout << "args.interactive = " << d_interactive << std::endl ;
-    std::cout << "args.debug = " << d_debug << std::endl ;
+
+	if (d_interactive)
+		std::cout << "args.interactive = " << "true" << std::endl ;
+	else
+		std::cout << "args.interactive = " << "false" << std::endl ;
+
+	if (d_debug)
+		std::cout << "args.debug = " << "true" << std::endl ;
+	else
+		std::cout << "args.debug = " << "false" << std::endl ;
+
     std::cout << "args.name = " << d_name << std::endl ;
     std::cout << "args.type = " << d_type << std::endl ;
 }
