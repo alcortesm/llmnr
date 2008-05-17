@@ -7,27 +7,27 @@
 #include "llmnr.h"
 
 class Args {
-    unsigned int const d_port;
-    bool         const d_responder;
-    std::string  const d_configFilePath;
-    bool         const d_interactive;
-    bool         const d_debug;
-    std::string  const d_name;
-    std::string  const d_type;
+    unsigned short int  const d_port;
+    bool                const d_responder;
+    std::string         const d_configFilePath;
+    bool                const d_interactive;
+    bool                const d_debug;
+    std::string         const d_name;
+    std::string         const d_type;
     
 public:
 
-    Args(unsigned int const port,
-         bool         const responder,
-         std::string  const &configFilePath,
-         bool         const interactive,
-         bool         const debug,
-         std::string  const &name,
-         std::string  const &type);
+    Args(unsigned short int const port,
+         bool               const responder,
+         std::string        const &configFilePath,
+         bool               const interactive,
+         bool               const debug,
+         std::string        const &name,
+         std::string        const &type);
 
     static Args *       parse(int const argc, char ** const argv);
 
-    int                 port()           const;
+    unsigned short int  port()           const;
     bool                responder()      const;
     std::string const & configFilePath() const;
     bool                interactive()    const;

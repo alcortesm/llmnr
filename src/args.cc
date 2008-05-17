@@ -1,10 +1,11 @@
 #include "args.h"
 #include <getopt.h>
 #include <cstdlib>
+#include <cerrno>
 
 using std::string;
 
-Args::Args(unsigned int const   port,
+Args::Args(unsigned short int const   port,
            bool         const   responder,
            string       const & configFilePath,
            bool         const   interactive,
@@ -29,11 +30,43 @@ usage(void) {
 	std::cerr << MIN_PORT << " <= port <= " << MAX_PORT << std::endl;
 	exit(EXIT_FAILURE);
 }
-	
+
+// parse a decimal representation of a 16 bit unsigned integer
+// thats between 0 and 65535 ((1<<16) -1)
+unsigned short int
+str2uint16(const char * a) {
+    char *end_ptr;
+    long int long_var;
+
+    if (a[0] == 0)
+        return (unsigned short int) 0;
+
+    errno = 0;
+    long_var = std::strtol(a, &end_ptr, 0); // decimal conversion
+
+    if (errno == ERANGE) { // number out of range TODO: throw exception
+        std::cerr << a << " is out of strtol() range" << std::endl;
+        return (unsigned short int) 0;
+    } else if (long_var > ((1<<16) -1)) {
+        std::cerr << a << " is too large for a 16 bit unsigned integer, max is " << ((1<<16) -1) << std::endl;
+        return (unsigned short int) 0;
+    } else if (long_var < 0) {
+        std::cerr << a << " is too small for a 16 bit unsigned integer, min is 0" << std::endl;
+        return (unsigned short int) 0;
+    } else if (end_ptr == a) {
+        std::cerr << a << " is not a valid numeric input" << std::endl;
+        return (unsigned short int) 0;
+    } else if (*end_ptr != '\0') {
+        std::cerr << a << " is not a valid numeric input, it has extra caracters at the end" << std::endl;
+        return (unsigned short int) 0;
+    }
+    return (unsigned short int) long_var;
+}
+
 Args *
 Args::parse(int argc, char** argv)
 {
-    unsigned int port = DEF_PORT;
+    unsigned short int port = DEF_PORT;
     bool         responder = false;
     string       configFilePath;
     bool         interactive = false;
@@ -63,9 +96,15 @@ Args::parse(int argc, char** argv)
 		
 		switch (c) {
 		case 'p':
-			port = atoi(optarg);
-			if (port < MIN_PORT || port > MAX_PORT)
+			port = str2uint16(optarg);
+			if (port < MIN_PORT) 
 				usage();
+            // the following is a comparison for (port > MAX_PORT)
+            // It can not be written like that as gcc gives the following warning on
+            // systems with 16 bit unsigned shorts:
+            // warning: comparison is always false due to limited range of data type
+            if (port - MAX_PORT > 0)
+                usage();
 			break;
 
 		case 'r':
@@ -135,7 +174,7 @@ Args::print() const
     std::cout << "args.type = " << d_type << std::endl ;
 }
 
-int
+unsigned short int
 Args::port() const {
     return d_port;
 }
