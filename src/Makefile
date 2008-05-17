@@ -1,5 +1,8 @@
-llmnr: args.o main.o
+llmnr: rr.o args.o main.o
 	g++ -Wall args.o main.o -o llmnr
+
+rr.o: rr.cc rr.h
+	g++ -Wall rr.cc -c
 
 args.o: args.cc args.h
 	g++ -Wall args.cc -c
