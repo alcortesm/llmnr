@@ -1,15 +1,27 @@
-llmnr: rr.o args.o main.o
-	g++ -Wall args.o main.o -o llmnr
+CC=g++
+CFLAGS=-Wall
+LDFLAGS=-Wall
+SRCS=rr.cc args.cc main.cc
+OBJS=$(SRCS:.cc=.o)
+BIN=llmnr
+BINPATH=${HOME}/bin/
 
-rr.o: rr.cc rr.h
-	g++ -Wall rr.cc -c
+.PHONY: install clean nuke
 
-args.o: args.cc args.h
-	g++ -Wall args.cc -c
+install: $(BIN)
+	- cp $(BIN) $(BINPATH)
 
-main.o: main.cc args.h
-	g++ -Wall main.cc -c
+$(BIN): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
-	- rm -rf *.o
-	- rm -rf llmnr
+	- rm -f core
+	- rm -f $(OBJS)
+	- rm -f $(BIN)
+
+nuke: clean
+	-rm -f $(BINPATH)$(BIN)
+
