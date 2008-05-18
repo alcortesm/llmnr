@@ -5,13 +5,13 @@
 
 namespace rr {
 
-class Class {
+class Clas {
     unsigned short int  const d_value;
     std::string         const d_name;
-    Class(unsigned short int const value, std::string const &name);
+    Clas(unsigned short int const value, std::string const &name);
     
 public:
-    static const Class IN;
+    static const Clas IN;
 
     unsigned short int  value() const;
     std::string const & name()  const;

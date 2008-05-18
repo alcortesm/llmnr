@@ -1,26 +1,26 @@
 #include <iostream>
-#include "class.h"
+#include "clas.h"
 
-using rr::Class;
+using rr::Clas;
 
-Class const Class::IN     = Class( 1, "IN"); //RFC 1035 - the Internet
+Clas const Clas::IN = Clas( 1, "IN"); //RFC 1035 - the Internet
 
-Class::Class(unsigned short int const value, std::string const &name)
+Clas::Clas(unsigned short int const value, std::string const &name)
     : d_value(value), d_name(name) {};
 
 unsigned short int
-Class::value() const {
+Clas::value() const {
     return d_value;
 }
 
 std::string const &
-Class::name() const {
+Clas::name() const {
     return d_name;
 }
 
 void
-Class::print() const {
-    std::cout << "class{value=" << d_value;
+Clas::print() const {
+    std::cout << "clas{value=" << d_value;
     std::cout << ", name=" << d_name;
     std::cout << "}" << std::endl;
 }

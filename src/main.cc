@@ -1,7 +1,8 @@
 #include <iostream>
 #include "args.h"
 #include "type.h"
-#include "class.h"
+#include "clas.h"
+#include "rr.h"
 
 using std::cout;
 using std::endl;
@@ -24,5 +25,10 @@ main(int argc, char ** argv)
     
     cout << endl;
 
-    rr::Class::IN.print();
+    rr::Clas::IN.print();
+
+    cout << endl;
+
+    rr::Rr const * rr = rr::Rr::parse("hola");
+    rr->print();
 }

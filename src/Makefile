@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-Wall
 LDFLAGS=-Wall
-SRCS=class.cc type.cc rr.cc args.cc main.cc
+SRCS=clas.cc type.cc rr.cc args.cc main.cc
 OBJS=$(SRCS:.cc=.o)
 BIN=llmnr
 BINPATH=${HOME}/bin/

@@ -1,3 +1,5 @@
+// This class represents a resource record defined by rfc1035
+
 #ifndef INCLUDED_RR
 #define INCLUDED_RR
 
@@ -5,6 +7,7 @@
 
 #include "llmnr.h"
 #include "type.h"
+#include "clas.h"
 
 namespace rr {
 
@@ -12,17 +15,30 @@ class Rr {
 
     std::string         const d_name;
     Type                const d_type;
-    unsigned short int  const d_class;
-    signed long int     const d_ttl;
-    unsigned short int  const d_rdlength;
+    Clas                const d_clas;
+    signed long int     const d_ttl; // seconds that the resource may be cached
     std::string         const d_rdata;
-
+    
 public:
 
-    Rr(std::string const & name);
-    std::string const & name()  const;
-    void                print() const;
-};
+    static Rr const *       parse(std::string const & s);
+
+    std::string     const &  name()     const;
+    Type            const &  type()     const;
+    Clas            const &  clas()     const;
+    signed long int const    ttl()      const;
+    std::string     const &  rdata()    const;
+    unsigned short int const rdlength() const; 
+
+    void                    print() const;
+
+private:
+
+    Rr(std::string const & name,
+            Type const & type,
+            Clas const & clas,
+            signed long int const ttl,
+            std::string const & rdata);};
 
 }
 #endif
