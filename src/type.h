@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace rr {
+
 class Type {
     unsigned short int  const d_value;
     std::string         const d_name;
@@ -21,4 +23,5 @@ public:
     void                print() const;
 };
 
+}
 #endif

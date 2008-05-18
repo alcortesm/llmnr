@@ -4,11 +4,14 @@
 #include <string>
 
 #include "llmnr.h"
+#include "type.h"
+
+namespace rr {
 
 class Rr {
 
     std::string         const d_name;
-    unsigned short int  const d_type;
+    Type                const d_type;
     unsigned short int  const d_class;
     signed long int     const d_ttl;
     unsigned short int  const d_rdlength;
@@ -21,4 +24,5 @@ public:
     void                print() const;
 };
 
+}
 #endif

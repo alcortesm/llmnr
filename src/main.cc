@@ -14,10 +14,10 @@ main(int argc, char ** argv)
 
     cout << endl;
 
-    Type::A.print();
-    Type::NS.print();
-    Type::CNAME.print();
-    Type::SOA.print();
-    Type::PTR.print();
-    Type::MX.print();
+    rr::Type::A.print();
+    rr::Type::NS.print();
+    rr::Type::CNAME.print();
+    rr::Type::SOA.print();
+    rr::Type::PTR.print();
+    rr::Type::MX.print();
 }

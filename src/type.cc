@@ -1,6 +1,8 @@
 #include <iostream>
 #include "type.h"
 
+using rr::Type;
+
 Type const Type::A     = Type( 1, "A");     //RFC 1035
 Type const Type::NS    = Type( 2, "NS");    //RFC 1035
 Type const Type::CNAME = Type( 5, "CNAME"); //RFC 1035
