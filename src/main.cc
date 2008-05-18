@@ -1,6 +1,7 @@
 #include <iostream>
 #include "args.h"
 #include "type.h"
+#include "class.h"
 
 using std::cout;
 using std::endl;
@@ -20,4 +21,8 @@ main(int argc, char ** argv)
     rr::Type::SOA.print();
     rr::Type::PTR.print();
     rr::Type::MX.print();
+    
+    cout << endl;
+
+    rr::Class::IN.print();
 }
