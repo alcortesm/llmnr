@@ -10,6 +10,11 @@ class Type {
     
 public:
     static const Type A;
+    static const Type NS;
+    static const Type CNAME;
+    static const Type SOA;
+    static const Type PTR;
+    static const Type MX;
 
     unsigned short int  value() const;
     std::string const & name()  const;
