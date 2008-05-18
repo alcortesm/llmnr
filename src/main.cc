@@ -6,6 +6,7 @@
 
 using std::cout;
 using std::endl;
+using rr::Rr;
 
 int
 main(int argc, char ** argv)
@@ -13,6 +14,7 @@ main(int argc, char ** argv)
     Args * argsp;
     argsp = Args::parse(argc, argv);
     argsp->print();
+    delete argsp;
 
     cout << endl;
 
@@ -29,6 +31,8 @@ main(int argc, char ** argv)
 
     cout << endl;
 
-    rr::Rr const * rr = rr::Rr::parse("hola");
+    Rr const * rr;
+    rr = Rr::parse("hola");
     rr->print();
+    delete rr;
 }
