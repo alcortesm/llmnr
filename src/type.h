@@ -1,3 +1,9 @@
+// This class represents a DNS resource record type, see
+// rfc 1035 for the details.
+//
+// There are no public constructors, only the static const
+// members can be used (Type::A, Type::NS...)
+
 #ifndef INCLUDED_TYPE
 #define INCLUDED_TYPE
 
