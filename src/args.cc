@@ -5,13 +5,13 @@
 
 using std::string;
 
-Args::Args(unsigned short int const   port,
-           bool         const   responder,
-           string       const & configFilePath,
-           bool         const   interactive,
-           bool         const   debug,
-           string       const & name,
-           string       const & type)
+Args::Args(unsigned short int   const   port,
+           bool                 const   responder,
+           string               const & configFilePath,
+           bool                 const   interactive,
+           bool                 const   debug,
+           string               const & name,
+           string               const & type)
 :
     d_port(port),
     d_responder(responder),

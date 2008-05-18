@@ -1,3 +1,11 @@
+// The class Args stores the program's arguments
+//
+// There is no public constructor, you should use
+// the Args.parse(argv, argc) instead.
+//
+// Use the accessor members to get each program's
+// arguments data.
+
 #ifndef INCLUDED_ARGS
 #define INCLUDED_ARGS
 
