@@ -11,6 +11,12 @@
 
 namespace rr {
 
+class NoContentEx {
+};
+
+class BadSyntaxEx {
+};
+    
 class Rr {
 
     std::string         const d_name;
@@ -21,14 +27,14 @@ class Rr {
     
 public:
 
-    static Rr const *       parse(std::string const & s);
+    static Rr const *       parse(std::string const & s) throw (NoContentEx, BadSyntaxEx);
 
     std::string     const &  name()     const;
     Type            const &  type()     const;
     Clas            const &  clas()     const;
-    signed long int const    ttl()      const;
+    signed long int          ttl()      const;
     std::string     const &  rdata()    const;
-    unsigned short int const rdlength() const; 
+    unsigned short int       rdlength() const; 
 
     void                    print() const;
 
@@ -37,7 +43,7 @@ private:
     Rr(std::string const & name,
             Type const & type,
             Clas const & clas,
-            signed long int const ttl,
+            signed long int ttl,
             std::string const & rdata);};
 
 }

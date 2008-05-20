@@ -35,28 +35,31 @@ To exit interactive mode send an \fBEOF\fR.
 Debug mode. Developers must use this mode to isolate users from theirs chatty debugging outputs.
 .SH CONFIGURATION FILE SYNTAX
 The configuration file has one DNS RR per line. Lines begining with \fI#\fR are ignored.
-RR syntax is NAME, CLASS, TYPE and RDATA separated by any number of spaces or tabs.
+Empty lines and lines with only spaces and/or tabs are also ignored. RR syntax is NAME, TTL,
+CLASS, TYPE and RDATA separated by any number of spaces or tabs.
 Supported types are \fISOA\fR, \fINS\fR, \fIA\fR, \fIPTR\fR, \fIMX\fR and \fICNAME\fR.
+Llmnr uses absolute domain names in its configuration files, inputs and outputs.
+The domain name passed as an argument does not need the final ".".
 .SH EXAMPLES
 .TP
 Domain name resolution:
 .nf
 .B ; llmnr www.google.com
-www.l.google.com.       IN      A       64.233.183.99
-www.l.google.com.       IN      A       64.233.183.104
-www.l.google.com.       IN      A       64.233.183.103
-www.l.google.com.       IN      A       64.233.183.147
+www.l.google.com.   200 IN  A   64.233.183.99
+www.l.google.com.   200 IN  A   64.233.183.104
+www.l.google.com.   200 IN  A   64.233.183.103
+www.l.google.com.   200 IN  A   64.233.183.147
 .fi
 .PP
 .TP
 Mail server resolution
 .nf
 .B ; llmnr it.uc3m.es MX
-it.uc3m.es.             IN      MX      6 smtp01.uc3m.es.
-it.uc3m.es.             IN      MX      6 smtp02.uc3m.es.
-it.uc3m.es.             IN      MX      6 smtp03.uc3m.es.
-it.uc3m.es.             IN      MX      9 mail.rediris.es.
-it.uc3m.es.             IN      MX      5 smtp.uc3m.es.
+it.uc3m.es.         100 IN  MX  6 smtp01.uc3m.es.
+it.uc3m.es.         100 IN  MX  6 smtp02.uc3m.es.
+it.uc3m.es.         100 IN  MX  6 smtp03.uc3m.es.
+it.uc3m.es.         100 IN  MX  9 mail.rediris.es.
+it.uc3m.es.         100 IN  MX  5 smtp.uc3m.es.
 .fi
 .PP
 .TP
@@ -69,9 +72,9 @@ Responder daemon:
 Configuration file example:
 .nf
 ; cat llmnr.conf
-it.uc3m.es IN A 163.117.15.1
-it.uc3m.es IN MX 5 smtp.uc3m.es.
-it.uc3m.es IN MX 9 mail.rediris.es.
+it.uc3m.es. 200 IN A 163.117.15.1
+it.uc3m.es. 100 IN MX 5 smtp.uc3m.es.
+it.uc3m.es. 100 IN MX 9 mail.rediris.es.
 .fi
 .TP
 Interactive mode on port 6666:
@@ -100,6 +103,12 @@ a RR conflict is detected. The following sintax is used for each type of trace:
 .fi
 
 \fIID\fR is the request id, \fIIP\fR is an ip address in dotted-decimal notation and \fIRR\fR is DNS resource record name.
+
+Example:
+.nf
+#[2008-02-08 17:00:02+01:00] query sent [id: 0x23ad]
+.fi
+
 .SH AUTHOR
 Some forgotten UC3M student.
 .SH SEE ALSO

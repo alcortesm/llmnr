@@ -32,7 +32,28 @@ main(int argc, char ** argv)
     cout << endl;
 
     Rr const * rr;
-    rr = Rr::parse("hola");
-    rr->print();
-    delete rr;
+    try {
+        rr = Rr::parse(" 	 rrname 132 rrclass		rrtype	 rdata1 rdata2");
+        rr->print();
+        delete rr;
+    } catch (rr::NoContentEx e) {
+        std::cerr << "pasing failed" << endl;
+        exit(EXIT_FAILURE);
+    } catch (rr::BadSyntaxEx e) {
+        std::cerr << "pasing failed" << endl;
+        exit(EXIT_FAILURE);
+    }
+    try {
+        rr = Rr::parse(" #	 rrname 132 rrclass		rrtype	 rdata1 rdata2");
+        delete rr;
+        std::cerr << "parsing failed, comment not found!" << endl;;
+        exit(EXIT_FAILURE);
+    } catch (rr::NoContentEx e) {
+        cout << "parse of comment succed!" << endl;
+        // test passed
+    } catch (rr::BadSyntaxEx e) {
+        std::cerr << "pasing failed" << endl;;
+        exit(EXIT_FAILURE);
+    }
+    exit(EXIT_SUCCESS);
 }
