@@ -8,10 +8,14 @@
 #define INCLUDED_TYPE
 
 #include <string>
+#include <vector>
 
 namespace rr {
 
 class Type {
+
+    static Type const db[];
+    
     unsigned short int  const d_value;
     std::string         const d_name;
     Type(unsigned short int const value, std::string const &name);
@@ -23,6 +27,8 @@ public:
     static const Type SOA;
     static const Type PTR;
     static const Type MX;
+    static const Type & fromName(std::string const & name);
+    static const Type & fromValue(unsigned short int value);
 
     unsigned short int  value() const;
     std::string const & name()  const;

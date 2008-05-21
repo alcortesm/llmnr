@@ -9,8 +9,8 @@ using std::string;
 using rr::Rr;
 using rr::Type;
 using rr::Clas;
-using rr::NoContentEx;
-using rr::BadSyntaxEx;
+using rr::ExNoContent;
+using rr::ExBadSyntax;
 
 // parse a decimal representation of a 32 bit signed integer
 // thats between -2147483647 and 2147483647 (- ((1<<31)-1) ... 0 ... (1<<31)-1 )
@@ -47,7 +47,7 @@ str2int32(const char * const a) {
 }
 
 Rr const *
-Rr::parse(string const & s) throw (NoContentEx, BadSyntaxEx) {
+Rr::parse(string const & s) throw (ExNoContent, ExBadSyntax) {
     Rr const * rrp;
 
     string space = " \t"; // space or tab
@@ -55,47 +55,47 @@ Rr::parse(string const & s) throw (NoContentEx, BadSyntaxEx) {
     size_t first_non_space;
     first_non_space = s.find_first_not_of(space, 0);
     if (first_non_space == string::npos)
-        throw NoContentEx();
+        throw ExNoContent();
     if (s.at(first_non_space) == '#')
-        throw NoContentEx();
+        throw ExNoContent();
 
     size_t name_head =  first_non_space;
     size_t space_after_name = s.find_first_of(space, name_head);
     if (space_after_name == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t name_size = space_after_name - name_head;
 
     size_t ttl_head = s.find_first_not_of(space, space_after_name);
     if (ttl_head == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t space_after_ttl = s.find_first_of(space, ttl_head);
     if (space_after_ttl == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t ttl_size = space_after_ttl - ttl_head;
     
     size_t clas_head = s.find_first_not_of(space, space_after_ttl);
     if (clas_head == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t space_after_clas = s.find_first_of(space, clas_head);
     if (space_after_clas == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t clas_size = space_after_clas - clas_head;
     
     size_t type_head = s.find_first_not_of(space, space_after_clas);
     if (type_head == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t space_after_type = s.find_first_of(space, type_head);
     if (space_after_type == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t type_size = space_after_type - type_head;
     
     size_t rdata_head = s.find_first_not_of(space, space_after_type);
     if (rdata_head == string::npos)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     size_t end_of_rdata = s.size()-1;
     size_t rdata_size = end_of_rdata - rdata_head +1;
     if (rdata_size == 0)
-        throw BadSyntaxEx();
+        throw ExBadSyntax();
     
     string name_str  = s.substr(name_head,  name_size);
     string type_str  = s.substr(type_head,  type_size);
@@ -103,7 +103,7 @@ Rr::parse(string const & s) throw (NoContentEx, BadSyntaxEx) {
     string ttl_str   = s.substr(ttl_head,   ttl_size);
     string rdata_str = s.substr(rdata_head, rdata_size);
 
-    Type const & type = Type::A;
+    Type const & type = Type::fromName(type_str);
     Clas const & clas = Clas::IN;
     signed long int ttl = str2int32(ttl_str.c_str());
     

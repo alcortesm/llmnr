@@ -9,9 +9,28 @@ Type const Type::CNAME = Type( 5, "CNAME"); //RFC 1035 - the canonical name for 
 Type const Type::SOA   = Type( 6, "SOA");   //RFC 1035 - marks the start of a zone of authority
 Type const Type::PTR   = Type(12, "PTR");   //RFC 1035 - a domain name pointer
 Type const Type::MX    = Type(15, "MX");    //RFC 1035 - mail exchange
+Type const Type::db[6] = {Type::A, Type::NS, Type::CNAME, Type::SOA, Type::PTR, Type::MX};
 
-Type::Type(unsigned short int const value, std::string const &name)
+Type::Type(unsigned short int const value, std::string const & name)
     : d_value(value), d_name(name) {};
+
+const Type &
+Type::fromName(std::string const & name) {
+    for (int i=0; i<6; i++) {
+        if (name==(Type::db[i]).name())
+            return Type::db[i];
+    }
+    return Type::A;
+}
+
+const Type &
+Type::fromValue(unsigned short int value) {
+    for (int i=0; i<6; i++) {
+        if (value==(Type::db[i]).value())
+            return Type::db[i];
+    }
+    return Type::A;
+}
 
 unsigned short int
 Type::value() const {

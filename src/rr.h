@@ -11,40 +11,39 @@
 
 namespace rr {
 
-class NoContentEx {
-};
+    class ExNoContent {};
 
-class BadSyntaxEx {
-};
+    class ExBadSyntax {};
     
-class Rr {
+    class Rr {
 
-    std::string         const d_name;
-    Type                const d_type;
-    Clas                const d_clas;
-    signed long int     const d_ttl; // seconds that the resource may be cached
-    std::string         const d_rdata;
-    
-public:
+        std::string         const d_name;
+        Type                const d_type;
+        Clas                const d_clas;
+        signed long int     const d_ttl; // seconds that the resource may be cached
+        std::string         const d_rdata;
 
-    static Rr const *       parse(std::string const & s) throw (NoContentEx, BadSyntaxEx);
+        public:
 
-    std::string     const &  name()     const;
-    Type            const &  type()     const;
-    Clas            const &  clas()     const;
-    signed long int          ttl()      const;
-    std::string     const &  rdata()    const;
-    unsigned short int       rdlength() const; 
+        static Rr const *       parse(std::string const & s) throw (ExNoContent, ExBadSyntax);
 
-    void                    print() const;
+        std::string     const &  name()     const;
+        Type            const &  type()     const;
+        Clas            const &  clas()     const;
+        signed long int          ttl()      const;
+        std::string     const &  rdata()    const;
+        unsigned short int       rdlength() const; 
 
-private:
+        void                    print() const;
 
-    Rr(std::string const & name,
-            Type const & type,
-            Clas const & clas,
-            signed long int ttl,
-            std::string const & rdata);};
+        private:
+
+        Rr(std::string const & name,
+                Type const & type,
+                Clas const & clas,
+                signed long int ttl,
+                std::string const & rdata);
+    };
 
 }
 #endif
