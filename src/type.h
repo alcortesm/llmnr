@@ -1,8 +1,16 @@
 // This class represents a DNS resource record type, see
 // rfc 1035 for the details.
 //
-// There are no public constructors, only the static const
-// members can be used (Type::A, Type::NS...)
+// This class is modeled as a typesafe enum. There are no
+// public constructors. You should use the static const
+// members instead.
+//
+// You can access the name and value of each static member
+// using name() and value().
+//
+// You can get a reference to the right types by asking
+// the fromName() or fromValue(). They throw an exception
+// if the name or value is unknown.
 
 #ifndef INCLUDED_TYPE
 #define INCLUDED_TYPE
