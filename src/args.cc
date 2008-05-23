@@ -33,32 +33,28 @@ usage(void) {
 
 // parse a decimal representation of a 16 bit unsigned integer
 // thats between 0 and 65535 ((1<<16) -1)
-unsigned short int
-str2uint16(const char * a) {
+unsigned short
+str2uint16(const char * a) throw (string)
+{
     char *end_ptr;
     long int long_var;
 
     if (a[0] == 0)
-        return (unsigned short int) 0;
+        throw string("null input pointer");
 
     errno = 0;
     long_var = std::strtol(a, &end_ptr, 0); // decimal conversion
 
-    if (errno == ERANGE) { // number out of range TODO: throw exception
-        std::cerr << a << " is out of strtol() range" << std::endl;
-        return (unsigned short int) 0;
+    if (errno == ERANGE) {
+        throw string("number out of range");
     } else if (long_var > ((1<<16) -1)) {
-        std::cerr << a << " is too large for a 16 bit unsigned integer, max is " << ((1<<16) -1) << std::endl;
-        return (unsigned short int) 0;
+        throw string("number too large for a 16 bits unsigned integer");
     } else if (long_var < 0) {
-        std::cerr << a << " is too small for a 16 bit unsigned integer, min is 0" << std::endl;
-        return (unsigned short int) 0;
+        throw string("negative number");
     } else if (end_ptr == a) {
-        std::cerr << a << " is not a valid numeric input" << std::endl;
-        return (unsigned short int) 0;
+        throw string("not valid numeric input");
     } else if (*end_ptr != '\0') {
-        std::cerr << a << " is not a valid numeric input, it has extra caracters at the end" << std::endl;
-        return (unsigned short int) 0;
+        throw string("not valid numeric input, it has extra characters at the end");
     }
     return (unsigned short int) long_var;
 }
@@ -96,7 +92,12 @@ Args::parse(int argc, char** argv)
 		
 		switch (c) {
 		case 'p':
-			port = str2uint16(optarg);
+            try {
+			    port = str2uint16(optarg);
+            } catch (std::string & s) {
+                std::cerr << "bad port number: " << s << std::endl;
+                usage();
+            }
 			if (port < MIN_PORT) 
 				usage();
             // the following is a comparison for (port > MAX_PORT)
