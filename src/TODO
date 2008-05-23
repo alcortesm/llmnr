@@ -6,3 +6,4 @@ rr needs a good explanation, mention exceptions of parser
 
 there is a need for test-rr, test-args, test-clas...
 
+cambiar las excepciones de rr.parse para que lance strings, más cómodas para mostrar info al usuario
