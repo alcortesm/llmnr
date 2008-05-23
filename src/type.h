@@ -26,8 +26,10 @@ namespace rr {
         unsigned short const d_value;
         std::string    const d_name;
 
-        static std::map<unsigned short, Type const *>      const valueMap;
+        static std::map<unsigned short, Type const *> const valueMap;
+        static std::map<unsigned short, Type const *>::value_type const valueMapInitializer[];
         static std::map<std::string const, Type const *> const nameMap;
+        static std::map<std::string const, Type const *>::value_type const nameMapInitializer[];
 
         public:
         unsigned short      value()  const;

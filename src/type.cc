@@ -5,9 +5,9 @@ using std::string;
 using std::map;
 
 typedef std::map<std::string const, Type const *> NameMap;
-typedef NameMap::value_type               NameMapPair;
+typedef NameMap::value_type NameMapPair;
 typedef std::map<unsigned short, Type const *> ValueMap;
-typedef ValueMap::value_type           ValueMapPair;
+typedef ValueMap::value_type ValueMapPair;
 
 Type const Type::A     = Type( 1, "A");     //RFC 1035 - host address
 Type const Type::NS    = Type( 2, "NS");    //RFC 1035 - an authoritative name server
@@ -21,7 +21,7 @@ std::size_t size(T const (&a)[z]) {
     return z;
 }
 
-ValueMapPair valueMapInitializer[] = {
+ValueMapPair const Type::valueMapInitializer[] = {
     ValueMapPair(Type::A.value(),     &(Type::A)),
     ValueMapPair(Type::NS.value(),    &(Type::NS)),
     ValueMapPair(Type::CNAME.value(), &(Type::CNAME)),
@@ -31,7 +31,7 @@ ValueMapPair valueMapInitializer[] = {
 };
 ValueMap const Type::valueMap(valueMapInitializer, valueMapInitializer + size(valueMapInitializer));
 
-NameMapPair nameMapInitializer[] = {
+NameMapPair const Type::nameMapInitializer[] = {
     NameMapPair(Type::A.name(),     &(Type::A)),
     NameMapPair(Type::NS.name(),    &(Type::NS)),
     NameMapPair(Type::CNAME.name(), &(Type::CNAME)),
