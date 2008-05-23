@@ -16,32 +16,27 @@ using rr::ExBadSyntax;
 // thats between -2147483647 and 2147483647 (- ((1<<31)-1) ... 0 ... (1<<31)-1 )
 #define MAX_LONG ((1<<31)-1)
 #define MIN_LONG ((-1)*MAX_LONG)
-signed long int
-str2int32(const char * const a) {
+signed long
+str2int32(const char * const a) throw (string) {
     char *end_ptr;
     long int long_var;
 
     if (a[0] == 0)
-        return (signed long int) 0;
+        throw string("null pointer");
 
     errno = 0;
     long_var = std::strtol(a, &end_ptr, 0); // decimal conversion
 
-    if (errno == ERANGE) { // number out of range TODO: throw exception
-        std::cerr << a << " is out of strtol() range" << std::endl;
-        return (signed long int) 0;
+    if (errno == ERANGE) {
+        throw string("number out of range");
     } else if (long_var > MAX_LONG) {
-        std::cerr << a << " is too large for a 32 bit signed integer, max is " << MAX_LONG << std::endl;
-        return (signed long int) 0;
+        throw string("number too large for a 32 bit signed integer");
     } else if (long_var < MIN_LONG) {
-        std::cerr << a << " is too small for a 32 bit signed integer, min is " << MIN_LONG << std::endl;
-        return (signed long int) 0;
+        throw string("number too small for a 32 bit signed integer");
     } else if (end_ptr == a) {
-        std::cerr << a << " is not a valid numeric input" << std::endl;
-        return (signed long int) 0;
+        throw string("not a valid numeric input");
     } else if (*end_ptr != '\0') {
-        std::cerr << a << " is not a valid numeric input, it has extra caracters at the end" << std::endl;
-        return (signed long int) 0;
+        throw string("not a valid numeric input, it has extra characters at the end");
     }
     return (signed long int) long_var;
 }
@@ -105,7 +100,12 @@ Rr::parse(string const & s) throw (ExNoContent, ExBadSyntax) {
 
     Type const & type = Type::fromName(type_str);
     Clas const & clas = Clas::IN;
-    signed long int ttl = str2int32(ttl_str.c_str());
+    signed long ttl;
+    try {
+        ttl = str2int32(ttl_str.c_str());
+    } catch (string & s) {
+        throw ExBadSyntax();
+    }
     
     rrp = new Rr(name_str, type, clas, ttl, rdata_str);
     return rrp;
