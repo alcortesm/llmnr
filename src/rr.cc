@@ -85,8 +85,8 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     size_t rdata_head = s.find_first_not_of(space, space_after_type);
     if (rdata_head == string::npos)
         throw Rr::ExBadSyntax();
-    size_t end_of_rdata = s.size()-1;
-    size_t rdata_size = end_of_rdata - rdata_head +1;
+    size_t end_of_rdata = s.find_last_not_of(space);
+    size_t rdata_size = end_of_rdata - rdata_head + 1;
     if (rdata_size == 0)
         throw Rr::ExBadSyntax();
     

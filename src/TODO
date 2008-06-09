@@ -4,4 +4,4 @@ rr needs a good explanation, mention exceptions of parser
 
 there is a need for args-test...
 
-rdata must not include spaces at the end, fix this in Rr::parse
+rr needs operator<<
