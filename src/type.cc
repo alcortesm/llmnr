@@ -74,6 +74,11 @@ Type::name() const {
     return d_name;
 }
 
+int
+rr::operator==(Type const & a, Type const & b){
+    return (&a == &b);
+}
+
 std::ostream &
 rr::operator<<(std::ostream & s, Type const & t){
     s << "(" << t.value() << ", " << t.name() << ")";

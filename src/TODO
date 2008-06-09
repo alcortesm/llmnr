@@ -5,7 +5,3 @@ rr needs a good explanation, mention exceptions of parser
 there is a need for args-test...
 
 rdata must not include spaces at the end, fix this in Rr::parse
-
-overload the klass == operator to compare addresses
-
-overload the klass = operator to make it private if possible, that way you can not copy, just assign references to the static members

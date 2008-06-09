@@ -15,6 +15,12 @@ using std::string;
 void
 type_test(void)
 {
+    // test operator ==
+    Type const & a = Type::A;
+    Type const & b = Type::A;
+    assert(a == b);
+    assert(a == Type::A);
+
     // test for value() and name() of the static members
     assert(Type::A.value() == 1);
     assert(Type::A.name() == "A");
@@ -31,73 +37,73 @@ type_test(void)
 
     // test for fromName() and fromValue() search methods 
     try {
-        assert(&(Type::fromName("A")) == &(Type::A));
+        assert(Type::fromName("A") == Type::A);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"A\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(1)) == &(Type::A));
+        assert(Type::fromValue(1) == Type::A);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(1) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromName("NS")) == &(Type::NS));
+        assert(Type::fromName("NS") == Type::NS);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"NS\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(2)) == &(Type::NS));
+        assert(Type::fromValue(2) == Type::NS);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(2) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromName("CNAME")) == &(Type::CNAME));
+        assert(Type::fromName("CNAME") == Type::CNAME);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"CNAME\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(5)) == &(Type::CNAME));
+        assert(Type::fromValue(5) == Type::CNAME);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(5) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromName("SOA")) == &(Type::SOA));
+        assert(Type::fromName("SOA") == Type::SOA);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"SOA\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(6)) == &(Type::SOA));
+        assert(Type::fromValue(6) == Type::SOA);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(6) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromName("PTR")) == &(Type::PTR));
+        assert(Type::fromName("PTR") == Type::PTR);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"PTR\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(12)) == &(Type::PTR));
+        assert(Type::fromValue(12) == Type::PTR);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(12) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromName("MX")) == &(Type::MX));
+        assert(Type::fromName("MX") == Type::MX);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromName(\"MX\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Type::fromValue(15)) == &(Type::MX));
+        assert(Type::fromValue(15) == Type::MX);
     } catch (Type::ExNotFound) {
         cerr << "Type::fromValue(15) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
@@ -105,11 +111,15 @@ type_test(void)
 
     // test the not-found exception of fromName() and fromValue()
     try {
-        assert(&(Type::fromName("foo")) == 0 && false);
+        Type::fromName("foo");
+        cerr << "Type::fromName(\"foo\") did not launched an exception" << endl;
+        exit(EXIT_FAILURE);
     } catch (Type::ExNotFound) {}
     
     try {
-        assert(&(Type::fromValue(345)) == 0 && false);
+        Type::fromValue(345);
+        cerr << "Type::fromValue(345) did not launched an exception" << endl;
+        exit(EXIT_FAILURE);
     } catch (Type::ExNotFound) {}
 
     // test the stream operator overload

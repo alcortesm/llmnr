@@ -6,8 +6,7 @@
 //
 // This class is modeled as a typesafe enum. There is no
 // public constructor or public copy-constructor. You
-// can ONLY use references to the static const members
-// instead:
+// can ONLY use references to the static const members:
 //
 // Klass const & a = rr::Klass::IN;
 // assert(a == rr::Klass::IN);

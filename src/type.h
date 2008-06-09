@@ -1,23 +1,29 @@
 // This class represents a DNS resource record type, see
 // rfc 1035 for the details.
 //
-// This class is modeled as a typesafe enum. There are no
-// public constructors. You should use the static const
-// members instead.
+// This class is modeled as a typesafe enum. There is no
+// public constructor or public copy-constructor. You
+// can ONLY use references to the static const members:
+//
+// Type const & a = rr::Type::A;
+// assert(a == rr::Type::A);
 //
 // You can access the name and value of each static member
 // using name() and value().
+//
+// assert(a.name() == "A");
+// assert(a.value() == 1);
 //
 // You can get a reference to the right types by asking
 // the fromName() or fromValue(). They throw an exception
 // if the name or value is unknown.
 //
-// Never copy types, just assign references, then you
-// can compare type comparing its addresses:
-//
-// type const & a = rr::Type::A;
-// type const & b = rr::Type::A;
-// assert(&a == &b);
+// try {
+//      Type const & b = rr::Type::fromName("A");
+// } catch (rr::Type::ExNotFound) {
+//      exit(EXIT_FAILURE);
+// }
+// assert(a == b);
 
 #ifndef INCLUDED_TYPE
 #define INCLUDED_TYPE
@@ -52,10 +58,14 @@ namespace rr {
         class ExNotFound {};
         static const Type & fromValue(unsigned short     value) throw (ExNotFound);
         static const Type & fromName(std::string const & name)  throw (ExNotFound);
+        friend int operator==(Type const & a, Type const & b);
 
         private:
         friend std::ostream & operator<<(std::ostream & s, Type const & t);
+        void operator=(Type const & t);
+        void operator&(Type const & t);
         Type(unsigned short const value, std::string const &name);
+        Type(Type const & t);
     };
 
 }
