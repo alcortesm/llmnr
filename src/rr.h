@@ -11,9 +11,6 @@
 
 namespace rr {
 
-    class ExNoContent {};
-
-    class ExBadSyntax {};
     
     class Rr {
 
@@ -25,7 +22,9 @@ namespace rr {
 
         public:
 
-        static Rr const *       parse(std::string const & s) throw (ExNoContent, ExBadSyntax);
+        class ExNoContent {};
+        class ExBadSyntax {};
+        static Rr       const *  parse(std::string const & s) throw (ExNoContent, ExBadSyntax);
 
         std::string     const &  name()     const;
         Type            const &  type()     const;
@@ -34,7 +33,7 @@ namespace rr {
         std::string     const &  rdata()    const;
         unsigned short int       rdlength() const; 
 
-        void                    print() const;
+        void                     print()    const;
 
         private:
 

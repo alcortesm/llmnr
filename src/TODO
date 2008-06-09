@@ -1,9 +1,5 @@
 research why min of signed 32 is ((-1)*(1<<31)) instead of ((-1)*(1<<31))-1
 
-rr parser needs to identify clas and type
-
 rr needs a good explanation, mention exceptions of parser
 
-there is a need for test-rr, test-args, test-clas...
-
-cambiar las excepciones de rr.parse para que lance strings, más cómodas para mostrar info al usuario
+there is a need for args-test...

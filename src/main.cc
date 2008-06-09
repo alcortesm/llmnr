@@ -16,30 +16,6 @@ main(int argc, char ** argv)
 
     cout << endl;
 
-//    rr::Type::A.print();
-//    rr::Type::NS.print();
-//    rr::Type::CNAME.print();
-//    rr::Type::SOA.print();
-//    rr::Type::PTR.print();
-//    rr::Type::MX.print();
-    
-    cout << endl;
-    
-    rr::Type const & type_a = rr::Type::fromName("A");
-    cout << "rr.Type.fromName(\"A\") = (" << (type_a.value()) << ", " << (type_a.name()) << ")" << endl;
-    rr::Type const & type_ns = rr::Type::fromName("NS");
-    cout << "rr.Type.fromName(\"NS\") = (" << (type_ns.value()) << ", " << (type_ns.name()) << ")" << endl;
-    rr::Type const & type_cname = rr::Type::fromName("CNAME");
-
-    std::cout << type_cname;
-    cout << endl;
-
-//    cout << endl;
-
-//    rr::Clas::IN.print();
-
-//    cout << endl;
-
 //    Rr const * rr;
 //    try {
 //        rr = Rr::parse(" 	 rrname 132 rrclass		rrtype rdata1 rdata2");
@@ -64,5 +40,6 @@ main(int argc, char ** argv)
 //        std::cerr << "pasing failed" << endl;;
 //        exit(EXIT_FAILURE);
 //    }
-//    exit(EXIT_SUCCESS);
+
+    exit(EXIT_SUCCESS);
 }

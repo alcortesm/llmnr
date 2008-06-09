@@ -6,8 +6,8 @@ OBJS=$(SRCS:.cc=.o)
 BIN=llmnr
 BINPATH=${HOME}/bin/
 
-TESTS_BINS=type-test clas-test
-TESTS_SRCS=type-test.cc clas-test.cc
+TESTS_BINS=type-test clas-test rr-test
+TESTS_SRCS=type-test.cc clas-test.cc rr-test.cc
 TESTS_OBJS=$(TESTS_SRCS:.cc=.o)
 
 .PHONY: install clean nuke
@@ -36,4 +36,7 @@ type-test: type-test.o type.o
 
 clas-test: clas-test.o clas.o
 	$(CC) $(CFLAGS) -o $@ clas-test.o clas.o
+
+rr-test: rr-test.o rr.o type.o clas.o
+	$(CC) $(CFLAGS) -o $@ rr-test.o rr.o type.o clas.o 
 
