@@ -23,7 +23,7 @@ $(TEST): $(OBJS) test.o
 
 clean:
 	- rm -f core
-	- rm -f $(OBJS)
+	- rm -f $(OBJS) main.o test.o
 	- rm -f $(BIN)
 	- rm -f $(TESTS)
 
