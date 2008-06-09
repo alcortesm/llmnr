@@ -9,7 +9,7 @@ using std::endl;
 using std::ostringstream;
 using rr::Rr;
 using rr::Type;
-using rr::Clas;
+using rr::Klass;
 using std::string;
 
 void
@@ -119,38 +119,38 @@ type_test(void)
 }
 
 void
-clas_test(void)
+klass_test(void)
 {
     // test for value() and name() of the static members
-    assert(Clas::IN.value() == 1);
-    assert(Clas::IN.name() == "IN");
+    assert(Klass::IN.value() == 1);
+    assert(Klass::IN.name() == "IN");
 
     // test for fromName() and fromValue() search methods 
     try {
-        assert(&(Clas::fromName("IN")) == &(Clas::IN));
-    } catch (Clas::ExNotFound) {
-        cerr << "Clas::fromName(\"IN\") threw an ExNotFoud" << endl; 
+        assert(&(Klass::fromName("IN")) == &(Klass::IN));
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromName(\"IN\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Clas::fromValue(1)) == &(Clas::IN));
-    } catch (Clas::ExNotFound) {
-        cerr << "Clas::fromValue(1) threw an ExNotFoud" << endl; 
+        assert(&(Klass::fromValue(1)) == &(Klass::IN));
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromValue(1) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
 
     // test the not-found exception of fromName() and fromValue()
     try {
-        assert(&(Clas::fromName("foo")) == 0 && false);
-    } catch (Clas::ExNotFound) {}
+        assert(&(Klass::fromName("foo")) == 0 && false);
+    } catch (Klass::ExNotFound) {}
     
     try {
-        assert(&(Clas::fromValue(345)) == 0 && false);
-    } catch (Clas::ExNotFound) {}
+        assert(&(Klass::fromValue(345)) == 0 && false);
+    } catch (Klass::ExNotFound) {}
 
     // test the stream operator overload
     ostringstream oss;
-    oss << Clas::IN ;
+    oss << Klass::IN ;
     assert(oss.str() == "(1, IN)");
 }
 
@@ -274,7 +274,7 @@ rr_test(void)
     rrp->print();
     assert(rrp->name()     == "www.l.google.com.");
     assert(&(rrp->type())  == &(rr::Type::A));
-    assert(&(rrp->clas())  == &(rr::Clas::IN));
+    assert(&(rrp->klass()) == &(rr::Klass::IN));
     assert(rrp->ttl()      == 200);
     assert(rrp->rdata()    == "64.233.183.99");
     assert(rrp->rdlength() == 13); 
@@ -286,7 +286,7 @@ int
 main(int argc, char ** argv) {
 
     type_test();
-    clas_test();
+    klass_test();
     rr_test();
 
     exit(EXIT_SUCCESS);

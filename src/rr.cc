@@ -1,6 +1,6 @@
 #include "rr.h"
 #include "type.h"
-#include "clas.h"
+#include "klass.h"
 
 #include <iostream>
 #include <cerrno>
@@ -8,7 +8,7 @@
 using std::string;
 using rr::Rr;
 using rr::Type;
-using rr::Clas;
+using rr::Klass;
 
 // parse a decimal representation of a 32 bit signed integer
 // thats between -2147483647 and 2147483647 (- ((1<<31)-1) ... 0 ... (1<<31)-1 )
@@ -66,15 +66,15 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
         throw Rr::ExBadSyntax();
     size_t ttl_size = space_after_ttl - ttl_head;
     
-    size_t clas_head = s.find_first_not_of(space, space_after_ttl);
-    if (clas_head == string::npos)
+    size_t klass_head = s.find_first_not_of(space, space_after_ttl);
+    if (klass_head == string::npos)
         throw Rr::ExBadSyntax();
-    size_t space_after_clas = s.find_first_of(space, clas_head);
-    if (space_after_clas == string::npos)
+    size_t space_after_klass = s.find_first_of(space, klass_head);
+    if (space_after_klass == string::npos)
         throw Rr::ExBadSyntax();
-    size_t clas_size = space_after_clas - clas_head;
+    size_t klass_size = space_after_klass - klass_head;
     
-    size_t type_head = s.find_first_not_of(space, space_after_clas);
+    size_t type_head = s.find_first_not_of(space, space_after_klass);
     if (type_head == string::npos)
         throw Rr::ExBadSyntax();
     size_t space_after_type = s.find_first_of(space, type_head);
@@ -92,12 +92,12 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     
     string name_str  = s.substr(name_head,  name_size);
     string type_str  = s.substr(type_head,  type_size);
-    string clas_str  = s.substr(clas_head,  clas_size);
+    string klass_str  = s.substr(klass_head,  klass_size);
     string ttl_str   = s.substr(ttl_head,   ttl_size);
     string rdata_str = s.substr(rdata_head, rdata_size);
 
     Type const & type = Type::fromName(type_str);
-    Clas const & clas = Clas::fromName(clas_str);
+    Klass const & klass = Klass::fromName(klass_str);
     signed long ttl;
     try {
         ttl = str2int32(ttl_str.c_str());
@@ -105,7 +105,7 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
         throw Rr::ExBadSyntax();
     }
     
-    rrp = new Rr(name_str, type, clas, ttl, rdata_str);
+    rrp = new Rr(name_str, type, klass, ttl, rdata_str);
     return rrp;
 }
 
@@ -119,9 +119,9 @@ Rr::type() const {
     return d_type;
 }
 
-Clas const &
-Rr::clas() const {
-    return d_clas;
+Klass const &
+Rr::klass() const {
+    return d_klass;
 }
 
 signed long int
@@ -141,13 +141,13 @@ Rr::rdlength() const {
 
 Rr::Rr(std::string const & name,
             Type const & type,
-            Clas const & clas,
+            Klass const & klass,
             signed long int ttl,
             std::string const & rdata)
 :
     d_name(name),
     d_type(type),
-    d_clas(clas),
+    d_klass(klass),
     d_ttl(ttl),
     d_rdata(rdata)
 {};
@@ -156,7 +156,7 @@ void
 Rr::print() const {
     std::cout << "rr{name=" << d_name;
     std::cout << ", ttl="  << d_ttl;
-    std::cout << ", clas=" << d_clas.name();
+    std::cout << ", klass=" << d_klass.name();
     std::cout << ", type=" << d_type.name();
     std::cout << ", rdata=" << d_rdata;
     std::cout << "}" << std::endl;

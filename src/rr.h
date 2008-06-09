@@ -7,16 +7,15 @@
 
 #include "llmnr.h"
 #include "type.h"
-#include "clas.h"
+#include "klass.h"
 
 namespace rr {
 
-    
     class Rr {
 
         std::string         const d_name;
         Type                const d_type;
-        Clas                const d_clas;
+        Klass               const d_klass;
         signed long int     const d_ttl; // seconds that the resource may be cached
         std::string         const d_rdata;
 
@@ -28,7 +27,7 @@ namespace rr {
 
         std::string     const &  name()     const;
         Type            const &  type()     const;
-        Clas            const &  clas()     const;
+        Klass           const &  klass()    const;
         signed long int          ttl()      const;
         std::string     const &  rdata()    const;
         unsigned short int       rdlength() const; 
@@ -39,7 +38,7 @@ namespace rr {
 
         Rr(std::string const & name,
                 Type const & type,
-                Clas const & clas,
+                Klass const & klass,
                 signed long int ttl,
                 std::string const & rdata);
     };
