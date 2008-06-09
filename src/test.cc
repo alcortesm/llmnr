@@ -273,8 +273,8 @@ rr_test(void)
     }
     rrp->print();
     assert(rrp->name()     == "www.l.google.com.");
-    assert(&(rrp->type())  == &(rr::Type::A));
     assert(&(rrp->klass()) == &(rr::Klass::IN));
+    assert(&(rrp->type())  == &(rr::Type::A));
     assert(rrp->ttl()      == 200);
     assert(rrp->rdata()    == "64.233.183.99");
     assert(rrp->rdlength() == 13); 

@@ -13,11 +13,11 @@ namespace rr {
 
     class Rr {
 
-        std::string         const d_name;
-        Type                const d_type;
-        Klass               const d_klass;
-        signed long int     const d_ttl; // seconds that the resource may be cached
-        std::string         const d_rdata;
+        std::string         const   d_name;
+        Type                const & d_type;
+        Klass               const & d_klass;
+        signed long int     const   d_ttl; // seconds that the resource may be cached
+        std::string         const   d_rdata;
 
         public:
 

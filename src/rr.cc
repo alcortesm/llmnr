@@ -155,9 +155,9 @@ Rr::Rr(std::string const & name,
 void
 Rr::print() const {
     std::cout << "rr{name=" << d_name;
-    std::cout << ", ttl="  << d_ttl;
+    std::cout << ", ttl="   << d_ttl;
     std::cout << ", klass=" << d_klass.name();
-    std::cout << ", type=" << d_type.name();
+    std::cout << ", type="  << d_type.name();
     std::cout << ", rdata=" << d_rdata;
     std::cout << "}" << std::endl;
 }

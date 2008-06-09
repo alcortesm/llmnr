@@ -11,6 +11,13 @@
 // You can get a reference to the right types by asking
 // the fromName() or fromValue(). They throw an exception
 // if the name or value is unknown.
+//
+// Never copy types, just assign references, then you
+// can compare type comparing its addresses:
+//
+// type const & a = rr::Type::A;
+// type const & b = rr::Type::A;
+// assert(&a == &b);
 
 #ifndef INCLUDED_TYPE
 #define INCLUDED_TYPE

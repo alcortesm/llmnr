@@ -12,6 +12,13 @@
 // the fromName() or fromValue(). They throw an exception
 // if the name or value is unknown.
 //
+// Never copy klasses, just assign references, then you
+// can compare klasses comparing its addresses:
+//
+// klass const & a = rr::Klass:IN;
+// klass const & b = rr::Klass:IN;
+// assert(&a == &b);
+//
 // As class is a reserved word for C++, I will use klass
 // instead
 
