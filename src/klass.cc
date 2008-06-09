@@ -65,3 +65,8 @@ rr::operator<<(std::ostream & s, Klass const & t){
     return s;
 }
 
+int
+rr::operator==(Klass const & a, Klass const & b)
+{
+    return (&a == &b);
+}

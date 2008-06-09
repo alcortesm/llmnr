@@ -121,19 +121,25 @@ type_test(void)
 void
 klass_test(void)
 {
+    // operator ==
+    Klass const & a = Klass::IN;
+    assert(a == Klass::IN);
+    Klass const & b = a;
+    assert(a == b);
+
     // test for value() and name() of the static members
     assert(Klass::IN.value() == 1);
     assert(Klass::IN.name() == "IN");
 
     // test for fromName() and fromValue() search methods 
     try {
-        assert(&(Klass::fromName("IN")) == &(Klass::IN));
+        assert(Klass::fromName("IN") == Klass::IN);
     } catch (Klass::ExNotFound) {
         cerr << "Klass::fromName(\"IN\") threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
     try {
-        assert(&(Klass::fromValue(1)) == &(Klass::IN));
+        assert(Klass::fromValue(1) == Klass::IN);
     } catch (Klass::ExNotFound) {
         cerr << "Klass::fromValue(1) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
@@ -141,11 +147,15 @@ klass_test(void)
 
     // test the not-found exception of fromName() and fromValue()
     try {
-        assert(&(Klass::fromName("foo")) == 0 && false);
+        Klass::fromName("foo");
+        cerr << "Klass::fromName(\"foo\") did not throw an exception" << endl;
+        exit(EXIT_FAILURE);
     } catch (Klass::ExNotFound) {}
     
     try {
-        assert(&(Klass::fromValue(345)) == 0 && false);
+        Klass::fromValue(345);
+        cerr << "Klass::fromValue(345) did not throw an exception" << endl;
+        exit(EXIT_FAILURE);
     } catch (Klass::ExNotFound) {}
 
     // test the stream operator overload

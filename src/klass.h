@@ -1,26 +1,33 @@
 // This class represents a DNS resource record class, see
 // rfc 1035 for the details.
 //
-// This class is modeled as a typesafe enum. There are no
-// public constructors. You should use the static const
-// members instead.
+// As class is a reserved word for C++, I will use klass
+// instead
+//
+// This class is modeled as a typesafe enum. There is no
+// public constructor or public copy-constructor. You
+// can ONLY use references to the static const members
+// instead:
+//
+// Klass const & a = rr::Klass::IN;
+// assert(a == rr::Klass::IN);
 //
 // You can access the name and value of each static member
-// using name() and value().
+// using name() and value():
+//
+// assert(a.name()  == "IN");
+// assert(a.value() == 1);
 //
 // You can get a reference to the right class by asking
 // the fromName() or fromValue(). They throw an exception
-// if the name or value is unknown.
+// if the name or value is unknown:
 //
-// Never copy klasses, just assign references, then you
-// can compare klasses comparing its addresses:
-//
-// klass const & a = rr::Klass:IN;
-// klass const & b = rr::Klass:IN;
-// assert(&a == &b);
-//
-// As class is a reserved word for C++, I will use klass
-// instead
+// try {
+//      Klass const & b = rr::Klass::fromName("IN");
+// } catch (rr::Klass::ExNotFound) {
+//      exit(EXIT_FAILURE);
+// }
+// assert(a == b);
 
 #ifndef INCLUDED_KLASS
 #define INCLUDED_KLASS
@@ -41,19 +48,23 @@ namespace rr {
         static const std::map<unsigned short, Klass const *>::value_type    valueMapInitializer[];
         static const std::map<std::string const, Klass const *>::value_type nameMapInitializer[];
 
-        public:
+    public:
+        static const Klass IN;
+
         unsigned short      value()  const;
         std::string const & name()   const;
-
-        static const Klass IN;
 
         class ExNotFound {};
         static const Klass & fromValue(unsigned short     value) throw (ExNotFound);
         static const Klass & fromName(std::string const & name)  throw (ExNotFound);
+        friend int operator==(Klass const & a, Klass const & b);
 
-        private:
+    private:
         friend std::ostream & operator<<(std::ostream & s, Klass const & t);
+        void operator=(Klass const & t);
+        void operator&(Klass const & t);
         Klass(unsigned short const value, std::string const &name);
+        Klass(Klass const & k);
     };
 
 }
