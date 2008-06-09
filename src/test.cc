@@ -125,7 +125,7 @@ type_test(void)
     // test the stream operator overload
     ostringstream oss;
     oss << Type::PTR ;
-    assert(oss.str() == "(12, PTR)");
+    assert(oss.str() == "PTR");
 }
 
 void
@@ -171,7 +171,7 @@ klass_test(void)
     // test the stream operator overload
     ostringstream oss;
     oss << Klass::IN ;
-    assert(oss.str() == "(1, IN)");
+    assert(oss.str() == "IN");
 }
 
 void

@@ -81,6 +81,6 @@ rr::operator==(Type const & a, Type const & b){
 
 std::ostream &
 rr::operator<<(std::ostream & s, Type const & t){
-    s << "(" << t.value() << ", " << t.name() << ")";
+    s << t.name();
     return s;
 }

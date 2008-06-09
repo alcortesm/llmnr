@@ -157,8 +157,8 @@ rr::operator<< (std::ostream & s, Rr const & rr)
 {
     s << rr.name()  << "\t";
     s << rr.ttl()   << "\t";
-    s << rr.klass().name() << "\t";
-    s << rr.type().name()  << "\t";
+    s << rr.klass() << "\t";
+    s << rr.type()  << "\t";
     s << rr.rdata();
     return s;
 }

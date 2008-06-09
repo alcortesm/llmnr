@@ -61,7 +61,7 @@ Klass::name() const {
 
 std::ostream &
 rr::operator<<(std::ostream & s, Klass const & t){
-    s << "(" << t.value() << ", " << t.name() << ")";
+    s << t.name() ;
     return s;
 }
 
