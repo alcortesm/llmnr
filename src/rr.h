@@ -4,6 +4,7 @@
 #define INCLUDED_RR
 
 #include <string>
+#include <iostream>
 
 #include "llmnr.h"
 #include "type.h"
@@ -32,10 +33,8 @@ namespace rr {
         std::string     const &  rdata()    const;
         unsigned short int       rdlength() const; 
 
-        void                     print()    const;
-
         private:
-
+        friend std::ostream & operator<<(std::ostream & s, Rr const & rr);
         Rr(std::string const & name,
                 Type const & type,
                 Klass const & klass,

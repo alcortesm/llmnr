@@ -92,7 +92,7 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     
     string name_str  = s.substr(name_head,  name_size);
     string type_str  = s.substr(type_head,  type_size);
-    string klass_str  = s.substr(klass_head,  klass_size);
+    string klass_str = s.substr(klass_head, klass_size);
     string ttl_str   = s.substr(ttl_head,   ttl_size);
     string rdata_str = s.substr(rdata_head, rdata_size);
 
@@ -152,12 +152,13 @@ Rr::Rr(std::string const & name,
     d_rdata(rdata)
 {};
 
-void
-Rr::print() const {
-    std::cout << "rr{name=" << d_name;
-    std::cout << ", ttl="   << d_ttl;
-    std::cout << ", klass=" << d_klass.name();
-    std::cout << ", type="  << d_type.name();
-    std::cout << ", rdata=" << d_rdata;
-    std::cout << "}" << std::endl;
+std::ostream &
+rr::operator<< (std::ostream & s, Rr const & rr)
+{
+    s << rr.name()  << "\t";
+    s << rr.ttl()   << "\t";
+    s << rr.klass().name() << "\t";
+    s << rr.type().name()  << "\t";
+    s << rr.rdata();
+    return s;
 }

@@ -291,13 +291,18 @@ rr_test(void)
         cerr << "Rr::parse() of a string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched ExBadSyntax" << endl ;
         exit(EXIT_FAILURE);
     }
-    rrp->print();
     assert(rrp->name()     == "www.l.google.com.");
     assert(&(rrp->klass()) == &(rr::Klass::IN));
     assert(&(rrp->type())  == &(rr::Type::A));
     assert(rrp->ttl()      == 200);
     assert(rrp->rdata()    == "64.233.183.99");
-    assert(rrp->rdlength() == 13); 
+    assert(rrp->rdlength() == 13);
+    
+    // test the stream operator overload
+    ostringstream oss;
+    oss << *rrp;
+    assert(oss.str() == "www.l.google.com.\t200\tIN\tA\t64.233.183.99");
+
     delete rrp;
     delete sp;
 }
