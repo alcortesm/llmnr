@@ -1,16 +1,24 @@
 #include "rr.h"
+#include "rdata.h"
+#include "rdataA.h"
 #include <cassert>
 #include <sstream>
 #include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::ostringstream;
+using std::string;
 using rr::Rr;
 using rr::Type;
 using rr::Klass;
-using std::string;
+using rr::RdataA;
+using rr::Rdata;
 
 void
 type_test(void)
@@ -306,11 +314,68 @@ rr_test(void)
     delete sp;
 }
 
+void
+rdataA_test(void)
+{
+    RdataA const * datap;
+
+    // bac sintax must throw an exception
+    try {
+        datap = RdataA::parse("hola");
+        cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (RdataA::ExBadSyntax) {}
+
+    // streaming a valid addr must give the same as the string from were it was parsed
+    // the addr must be the netwrok byte order version of the string
+    string s("163.117.141.12");
+    try {
+        datap = RdataA::parse(s);
+    } catch (RdataA::ExBadSyntax) {
+        cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    ostringstream oss;
+    oss << *datap;
+    assert(oss.str() == s);
+    int r;
+    const char * cp = s.c_str();
+    struct in_addr in;
+    r = inet_aton(cp, &in);
+    if (r == 0) {
+        cerr << "error in test: inet_aton of " << s << " failed!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    assert(in.s_addr == datap->addr());
+    delete datap;
+}
+
+void
+rdata_test(void)
+{
+    // A records always have 4 octects
+    string s("163.117.141.15");
+    Rdata const * datap;
+    try {
+        datap = RdataA::parse(s);
+    } catch (RdataA::ExBadSyntax) {
+        cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    assert(datap->length() == RdataA::LENGTH);
+    ostringstream oss;
+    oss << *datap;
+    assert(oss.str() == s);
+    delete datap;
+}
+
 int
 main(int argc, char ** argv) {
 
     type_test();
     klass_test();
+    rdataA_test();
+    rdata_test();
     rr_test();
 
     exit(EXIT_SUCCESS);

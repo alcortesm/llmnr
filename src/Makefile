@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-Wall
 LDFLAGS=-Wall
-SRCS=klass.cc type.cc rr.cc args.cc
+SRCS=klass.cc type.cc rr.cc args.cc rdata.cc rdataA.cc
 OBJS=$(SRCS:.cc=.o)
 BIN=llmnr
 TEST=test
@@ -25,7 +25,7 @@ clean:
 	- rm -f core
 	- rm -f $(OBJS) main.o test.o
 	- rm -f $(BIN)
-	- rm -f $(TESTS)
+	- rm -f $(TEST)
 
 nuke: clean
 	-rm -f $(BINPATH)$(BIN)
