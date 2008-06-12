@@ -4,4 +4,5 @@ rr needs a good explanation, mention exceptions of parser
 
 there is a need for args-test...
 
-rr needs operator<<
+rdata must be the super class of rdataA, rdataMX, rdataCNAME...
+

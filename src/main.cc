@@ -1,6 +1,6 @@
 #include "args.h"
 #include "type.h"
-#include "clas.h"
+#include "klass.h"
 #include "rr.h"
 
 using std::cout;

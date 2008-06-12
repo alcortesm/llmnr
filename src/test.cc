@@ -296,7 +296,6 @@ rr_test(void)
     assert(&(rrp->type())  == &(rr::Type::A));
     assert(rrp->ttl()      == 200);
     assert(rrp->rdata()    == "64.233.183.99");
-    assert(rrp->rdlength() == 13);
     
     // test the stream operator overload
     ostringstream oss;
