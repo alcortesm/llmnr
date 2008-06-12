@@ -134,11 +134,6 @@ Rr::rdata() const {
     return d_rdata;
 }
 
-unsigned short int
-Rr::rdlength() const {
-    return (unsigned short int) d_rdata.size();
-}
-
 Rr::Rr(std::string const & name,
             Type const & type,
             Klass const & klass,

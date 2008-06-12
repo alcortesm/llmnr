@@ -31,7 +31,6 @@ namespace rr {
         Klass           const &  klass()    const;
         signed long int          ttl()      const;
         std::string     const &  rdata()    const;
-        unsigned short int       rdlength() const; 
 
         private:
         friend std::ostream & operator<<(std::ostream & s, Rr const & rr);
