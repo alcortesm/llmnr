@@ -6,5 +6,6 @@ there is a need for args-test...
 
 rdata must be the super class of rdataMX, rdataCNAME...
 
-fix the problem with rdata: virtual friends are not allowed, How to virtualize operator<<?
+rdata.length() must not be virtual, it is the same for all.
 
+should virtual destructors by public?

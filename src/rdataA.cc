@@ -43,12 +43,12 @@ RdataA::length() const
     return d_length;
 }
 
-std::ostream &
-rr::operator<<(std::ostream & s, RdataA const & data)
+void
+RdataA::printOn(std::ostream & s) const
 {
     char dst[INET_ADDRSTRLEN];
     char const * r;
-    unsigned long addr = data.addr();
+    unsigned long addr = this->addr();
     const void * src = (const void *) &addr;
     r = inet_ntop(AF_INET, src, dst, INET_ADDRSTRLEN);
     if (r == 0) {
@@ -57,5 +57,4 @@ rr::operator<<(std::ostream & s, RdataA const & data)
     }
 
     s << dst ;
-    return s;
 }

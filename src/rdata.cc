@@ -6,3 +6,10 @@ rr::Rdata::Rdata(unsigned short length)
 
 rr::Rdata::~Rdata()
 {}
+
+std::ostream &
+rr::operator<<(std::ostream & s, rr::Rdata const & data)
+{
+    data.printOn(s);
+    return s;
+}

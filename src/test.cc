@@ -363,6 +363,8 @@ rdata_test(void)
         exit(EXIT_FAILURE);
     }
     assert(datap->length() == RdataA::LENGTH);
+
+    // streaming thorugh base class must be the same as through derived calss
     ostringstream oss;
     oss << *datap;
     assert(oss.str() == s);

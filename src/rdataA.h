@@ -20,7 +20,7 @@ namespace rr {
         ~RdataA();
     
     private:
-        friend std::ostream & operator<<(std::ostream & s, RdataA const & data);
+        void printOn(std::ostream & s) const ;
         RdataA(unsigned long addr);
     };
 
