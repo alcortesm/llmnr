@@ -14,7 +14,7 @@ namespace rr {
         virtual void printOn(std::ostream & s) const = 0; // used by opeator<< for virtualization
     public:
         friend std::ostream & operator<<(std::ostream & s, rr::Rdata const & data);
-        virtual unsigned short length() const = 0;
+        unsigned short length() const;
         virtual ~Rdata();
     };
 }

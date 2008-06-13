@@ -37,12 +37,6 @@ RdataA::addr() const
     return d_addr;
 }
 
-unsigned short
-RdataA::length() const
-{
-    return d_length;
-}
-
 void
 RdataA::printOn(std::ostream & s) const
 {

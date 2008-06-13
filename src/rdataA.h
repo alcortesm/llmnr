@@ -16,7 +16,6 @@ namespace rr {
         class ExBadSyntax {};
         static RdataA const * parse(std::string const & s) throw (ExBadSyntax);
         unsigned long  addr()   const;
-        unsigned short length() const;
         ~RdataA();
     
     private:

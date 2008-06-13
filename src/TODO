@@ -6,6 +6,6 @@ there is a need for args-test...
 
 rdata must be the super class of rdataMX, rdataCNAME...
 
-rdata.length() must not be virtual, it is the same for all.
-
 should virtual destructors by public?
+
+should rdataX.parse be virtual?
