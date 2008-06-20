@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-Wall
-LDFLAGS=-Wall
+CFLAGS=-Wall -g
+LDFLAGS=-Wall -g
 SRCS=klass.cc type.cc rr.cc args.cc rdata.cc rdataA.cc
 OBJS=$(SRCS:.cc=.o)
 BIN=llmnr
