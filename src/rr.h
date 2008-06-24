@@ -24,7 +24,8 @@ namespace rr {
 
         class ExNoContent {};
         class ExBadSyntax {};
-        static Rr       const *  parse(std::string const & s) throw (ExNoContent, ExBadSyntax);
+        static Rr const * parse(std::string const & s) // Named constructor
+            throw (ExNoContent, ExBadSyntax);
 
         std::string     const &  name()     const;
         Type            const &  type()     const;

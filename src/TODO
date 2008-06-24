@@ -9,3 +9,5 @@ rdata must be the super class of rdataMX, rdataCNAME...
 should virtual destructors by public?
 
 should rdataX.parse be virtual?
+
+leer http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-like rules) y aplicar
