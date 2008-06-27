@@ -347,6 +347,9 @@ rdataA_test(void)
         exit(EXIT_FAILURE);
     }
     assert(in.s_addr == datap->addr());
+    assert(Type::A == datap->type());
+    assert(Klass::IN == datap->klass());
+    assert(RdataA::LENGTH == datap->length());
     delete datap;
 }
 
@@ -363,6 +366,8 @@ rdata_test(void)
         exit(EXIT_FAILURE);
     }
     assert(datap->length() == RdataA::LENGTH);
+    assert(datap->type() == Type::A);
+    assert(datap->klass() == Klass::IN);
 
     // streaming thorugh base class must be the same as through derived calss
     ostringstream oss;

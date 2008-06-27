@@ -10,7 +10,7 @@ using rr::RdataA;
 using rr::Rdata;
 
 RdataA::RdataA(unsigned long addr)
-    : Rdata::Rdata(RdataA::LENGTH),
+    : Rdata(RdataA::LENGTH),
     d_addr(addr)
 {};
 
@@ -35,6 +35,18 @@ unsigned long
 RdataA::addr() const
 {
     return d_addr;
+}
+
+rr::Type const &
+RdataA::type() const
+{
+    return rr::Type::A;
+}
+
+rr::Klass const &
+RdataA::klass() const
+{
+    return rr::Klass::IN;
 }
 
 void
