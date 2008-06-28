@@ -13,8 +13,7 @@ namespace rr {
     
     public:
         static const unsigned short LENGTH = 4; // A registers use 4 octects, see rfc1035
-        class ExBadSyntax {};
-        static RdataA const * parse(std::string const & s) throw (ExBadSyntax);
+        static RdataA const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
         unsigned long  addr()   const;
         rr::Type  const & type() const;
         rr::Klass const & klass() const;

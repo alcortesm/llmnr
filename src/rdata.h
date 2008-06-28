@@ -15,6 +15,7 @@ namespace rr {
         Rdata(unsigned short length);
         virtual void printOn(std::ostream & s) const = 0; // used by opeator<< for virtualization
     public:
+        class ExBadSyntax {};
         friend std::ostream & operator<<(std::ostream & s, rr::Rdata const & data);
         unsigned short            length() const;
         virtual rr::Type  const & type()   const = 0;

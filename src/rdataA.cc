@@ -18,14 +18,14 @@ RdataA::~RdataA()
 {}
 
 RdataA const *
-RdataA::parse(string const & s) throw (RdataA::ExBadSyntax)
+RdataA::parse(string const & s) throw (Rdata::ExBadSyntax)
 {
     int r;
     const char * cp = s.c_str();
     struct in_addr in;
     r = inet_aton(cp, &in);
     if (r == 0)
-        throw ExBadSyntax();
+        throw Rdata::ExBadSyntax();
 
     RdataA * datap = new RdataA(in.s_addr);
     return datap;

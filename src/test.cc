@@ -1,6 +1,7 @@
 #include "rr.h"
 #include "rdata.h"
 #include "rdataA.h"
+#include "rdataMX.h"
 #include <cassert>
 #include <sstream>
 #include <string>
@@ -18,6 +19,7 @@ using rr::Rr;
 using rr::Type;
 using rr::Klass;
 using rr::RdataA;
+using rr::RdataMX;
 using rr::Rdata;
 
 void
@@ -315,11 +317,39 @@ rr_test(void)
 }
 
 void
+rdataMX_test(void)
+{
+    RdataMX const * datap;
+
+    // bad sintax must throw an exception
+    try {
+        datap = RdataMX::parse("hola");
+        cerr << "RdataMX::parse(\"hola\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+
+    string s("0 hola");
+    try {
+        datap = RdataMX::parse(s);
+    } catch (Rdata::ExBadSyntax) {
+        cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    ostringstream oss;
+    oss << *datap;
+    assert(oss.str() == s);
+    assert(Type::MX == datap->type());
+    assert(Klass::IN == datap->klass());
+    assert(s.length() == datap->length());
+    delete datap;
+}
+
+void
 rdataA_test(void)
 {
     RdataA const * datap;
 
-    // bac sintax must throw an exception
+    // bad sintax must throw an exception
     try {
         datap = RdataA::parse("hola");
         cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
@@ -356,23 +386,38 @@ rdataA_test(void)
 void
 rdata_test(void)
 {
-    // A records always have 4 octects
+    // A records
     string s("163.117.141.15");
     Rdata const * datap;
     try {
         datap = RdataA::parse(s);
-    } catch (RdataA::ExBadSyntax) {
+    } catch (Rdata::ExBadSyntax) {
         cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
         exit(EXIT_FAILURE);
     }
     assert(datap->length() == RdataA::LENGTH);
     assert(datap->type() == Type::A);
     assert(datap->klass() == Klass::IN);
-
     // streaming thorugh base class must be the same as through derived calss
     ostringstream oss;
     oss << *datap;
     assert(oss.str() == s);
+    delete datap;
+    
+    // MX records
+    string smx("0 hola");
+    try {
+        datap = RdataMX::parse(smx);
+    } catch (Rdata::ExBadSyntax) {
+        cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    assert(datap->length() == smx.length());
+    assert(datap->type() == Type::A);
+    assert(datap->klass() == Klass::IN);
+    
+    oss << *datap;
+    assert(oss.str() == smx);
     delete datap;
 }
 
@@ -382,6 +427,7 @@ main(int argc, char ** argv) {
     type_test();
     klass_test();
     rdataA_test();
+    rdataMX_test();
     rdata_test();
     rr_test();
 
