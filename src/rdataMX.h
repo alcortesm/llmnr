@@ -12,11 +12,13 @@ namespace rr {
     class RdataMX : public rr::Rdata {
 
         unsigned short d_preference; // 16 bits, lower numbers have more preference
-        std::string const & d_exchange; // A <domain-name> which specifies a host willing to
-                                   // act as a mail exchange for the owner name.
+        std::string const * d_exchangep; // A <domain-name> which specifies a host willing to
+                                        // act as a mail exchange for the owner name.
     
     public:
         static RdataMX const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
+        RdataMX(RdataMX const &);
+        RdataMX & operator=(RdataMX const &);
         unsigned short preference()    const;
         std::string const & exchange() const;
         rr::Type  const & type()       const;

@@ -1,7 +1,7 @@
+#include "util.h"
 #include "args.h"
 #include <getopt.h>
 #include <cstdlib>
-#include <cerrno>
 
 using std::string;
 
@@ -29,34 +29,6 @@ usage(void) {
 		<< std::endl ;
 	std::cerr << MIN_PORT << " <= port <= " << MAX_PORT << std::endl;
 	exit(EXIT_FAILURE);
-}
-
-// parse a decimal representation of a 16 bit unsigned integer
-// thats between 0 and 65535 ((1<<16) -1)
-unsigned short
-str2uint16(const char * a) throw (string)
-{
-    char *end_ptr;
-    long int long_var;
-
-    if (a[0] == 0)
-        throw string("null input pointer");
-
-    errno = 0;
-    long_var = std::strtol(a, &end_ptr, 0); // decimal conversion
-
-    if (errno == ERANGE) {
-        throw string("number out of range");
-    } else if (long_var > ((1<<16) -1)) {
-        throw string("number too large for a 16 bits unsigned integer");
-    } else if (long_var < 0) {
-        throw string("negative number");
-    } else if (end_ptr == a) {
-        throw string("not valid numeric input");
-    } else if (*end_ptr != '\0') {
-        throw string("not valid numeric input, it has extra characters at the end");
-    }
-    return (unsigned short int) long_var;
 }
 
 Args *
@@ -93,7 +65,7 @@ Args::parse(int argc, char** argv)
 		switch (c) {
 		case 'p':
             try {
-			    port = str2uint16(optarg);
+			    port = util::str2uint16(optarg);
             } catch (std::string & s) {
                 std::cerr << "bad port number: " << s << std::endl;
                 usage();

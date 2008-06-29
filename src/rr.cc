@@ -1,43 +1,14 @@
+#include "util.h"
 #include "rr.h"
 #include "type.h"
 #include "klass.h"
 
 #include <iostream>
-#include <cerrno>
 
 using std::string;
 using rr::Rr;
 using rr::Type;
 using rr::Klass;
-
-// parse a decimal representation of a 32 bit signed integer
-// thats between -2147483647 and 2147483647 (- ((1<<31)-1) ... 0 ... (1<<31)-1 )
-#define MAX_LONG ((1<<31)-1)
-#define MIN_LONG ((-1)*MAX_LONG)
-signed long
-str2int32(const char * const a) throw (string) {
-    char *end_ptr;
-    long int long_var;
-
-    if (a[0] == 0)
-        throw string("null pointer");
-
-    errno = 0;
-    long_var = std::strtol(a, &end_ptr, 0); // decimal conversion
-
-    if (errno == ERANGE) {
-        throw string("number out of range");
-    } else if (long_var > MAX_LONG) {
-        throw string("number too large for a 32 bit signed integer");
-    } else if (long_var < MIN_LONG) {
-        throw string("number too small for a 32 bit signed integer");
-    } else if (end_ptr == a) {
-        throw string("not a valid numeric input");
-    } else if (*end_ptr != '\0') {
-        throw string("not a valid numeric input, it has extra characters at the end");
-    }
-    return (signed long int) long_var;
-}
 
 Rr const *
 Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
@@ -100,7 +71,7 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     Klass const & klass = Klass::fromName(klass_str);
     signed long ttl;
     try {
-        ttl = str2int32(ttl_str.c_str());
+        ttl = util::str2sint32(ttl_str.c_str());
     } catch (string & s) {
         throw Rr::ExBadSyntax();
     }

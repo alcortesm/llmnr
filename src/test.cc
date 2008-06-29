@@ -317,34 +317,6 @@ rr_test(void)
 }
 
 void
-rdataMX_test(void)
-{
-    RdataMX const * datap;
-
-    // bad sintax must throw an exception
-    try {
-        datap = RdataMX::parse("hola");
-        cerr << "RdataMX::parse(\"hola\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-
-    string s("0 hola");
-    try {
-        datap = RdataMX::parse(s);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
-    }
-    ostringstream oss;
-    oss << *datap;
-    assert(oss.str() == s);
-    assert(Type::MX == datap->type());
-    assert(Klass::IN == datap->klass());
-    assert(s.length() == datap->length());
-    delete datap;
-}
-
-void
 rdataA_test(void)
 {
     RdataA const * datap;
@@ -384,40 +356,84 @@ rdataA_test(void)
 }
 
 void
+rdataMX_test(void)
+{
+    RdataMX const * datap;
+
+    // bad sintax must throw an exception
+    try {
+        datap = RdataMX::parse("0it.uc3m.es");
+        cerr << "RdataMX::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+    try {
+        datap = RdataMX::parse("-2 it.uc3m.es");
+        cerr << "RdataMX::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+    try {
+        datap = RdataMX::parse("9999999 it.uc3m.es");
+        cerr << "RdataMX::parse(\"9999999 it.uc3m.es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+    try {
+        datap = RdataMX::parse("0 it.uc3m. es");
+        cerr << "RdataMX::parse(\"0 it.uc3m .es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+
+    string s("0 it.uc3m.es");
+    try {
+        datap = RdataMX::parse(s);
+    } catch (Rdata::ExBadSyntax) {
+        cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    ostringstream oss;
+    oss << *datap;
+    assert(oss.str().compare(s) == 0);
+    assert(Type::MX == datap->type());
+    assert(Klass::IN == datap->klass());
+    assert(s.length()-2+2 == datap->length());
+    delete datap;
+}
+
+void
 rdata_test(void)
 {
-    // A records
-    string s("163.117.141.15");
     Rdata const * datap;
+
+    // A records
+    string sa("163.117.141.15");
     try {
-        datap = RdataA::parse(s);
+        datap = RdataA::parse(sa);
     } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        cerr << "RdataA::parse(\"" << sa << "\") throws  Rdata::ExBadSyntax" << endl;
         exit(EXIT_FAILURE);
     }
     assert(datap->length() == RdataA::LENGTH);
     assert(datap->type() == Type::A);
     assert(datap->klass() == Klass::IN);
     // streaming thorugh base class must be the same as through derived calss
-    ostringstream oss;
-    oss << *datap;
-    assert(oss.str() == s);
+    ostringstream ossa;
+    ossa << *datap;
+    assert(ossa.str() == sa);
     delete datap;
     
     // MX records
-    string smx("0 hola");
+    string smx("0 saruman.it.uc3m.es");
     try {
         datap = RdataMX::parse(smx);
     } catch (Rdata::ExBadSyntax) {
         cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax" << endl;
         exit(EXIT_FAILURE);
     }
-    assert(datap->length() == smx.length());
-    assert(datap->type() == Type::A);
+    assert(datap->length() == smx.length()-2+2);
+    assert(datap->type()  == Type::MX);
     assert(datap->klass() == Klass::IN);
-    
-    oss << *datap;
-    assert(oss.str() == smx);
+    ostringstream ossmx;
+    ossmx << *datap;
+    assert(ossmx.str().compare(smx) == 0);
     delete datap;
 }
 
