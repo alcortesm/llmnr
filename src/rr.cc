@@ -71,7 +71,7 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     Klass const & klass = Klass::fromName(klass_str);
     signed long ttl;
     try {
-        ttl = util::str2sint32(ttl_str.c_str());
+        ttl = util::str2sint32(ttl_str);
     } catch (string & s) {
         throw Rr::ExBadSyntax();
     }

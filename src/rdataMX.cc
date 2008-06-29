@@ -63,7 +63,7 @@ RdataMX::parse(string const & s) throw (Rdata::ExBadSyntax)
 
     unsigned short preference;
     try {
-        preference = util::str2uint16(preference_str.c_str());
+        preference = util::str2uint16(preference_str);
     } catch (string & s) {
         throw Rdata::ExBadSyntax();
     }

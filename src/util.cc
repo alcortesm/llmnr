@@ -6,8 +6,9 @@ using std::string;
 // parse a decimal representation of a 16 bit unsigned integer
 // thats between 0 and 65535 ((1<<16) -1)
 unsigned short
-util::str2uint16(const char * a) throw (string)
+util::str2uint16(string const & s) throw (string)
 {
+    const char * a = s.c_str();
     char *end_ptr;
     long int long_var;
 
@@ -34,7 +35,9 @@ util::str2uint16(const char * a) throw (string)
 // parse a decimal representation of a 32 bit signed integer
 // thats between -2147483647 and 2147483647 (- ((1<<31)-1) ... 0 ... (1<<31)-1 )
 signed long
-util::str2sint32(const char * const a) throw (string) {
+util::str2sint32(string const & s) throw (string)
+{
+    const char * a = s.c_str();
     char *end_ptr;
     long int long_var;
 

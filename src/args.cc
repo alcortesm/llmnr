@@ -65,7 +65,8 @@ Args::parse(int argc, char** argv)
 		switch (c) {
 		case 'p':
             try {
-			    port = util::str2uint16(optarg);
+                std::string oa(optarg); 
+			    port = util::str2uint16(oa);
             } catch (std::string & s) {
                 std::cerr << "bad port number: " << s << std::endl;
                 usage();
