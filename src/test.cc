@@ -3,6 +3,8 @@
 #include "rdata.h"
 #include "rdataA.h"
 #include "rdataMX.h"
+#include "rdataNS.h"
+
 #include <cassert>
 #include <sstream>
 #include <string>
@@ -20,6 +22,7 @@ using rr::Type;
 using rr::Klass;
 using rr::RdataA;
 using rr::RdataMX;
+using rr::RdataNS;
 using rr::Rdata;
 
 void
@@ -636,7 +639,43 @@ rdataMX_test(void)
     assert(oss.str().compare(s) == 0);
     assert(Type::MX == datap->type());
     assert(Klass::IN == datap->klass());
+    assert(datap->preference() == 0);
+    assert(datap->exchange().compare("it.uc3m.es") == 0);
     assert(s.length()-2+2 == datap->length());
+    delete datap;
+}
+
+void
+rdataNS_test(void)
+{
+    RdataNS const * datap;
+
+    // bad sintax must throw an exception
+    try {
+        datap = RdataNS::parse("0it.uc3m.es");
+        cerr << "RdataNS::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+    try {
+        datap = RdataNS::parse("-2 it.uc3m.es");
+        cerr << "RdataNS::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
+        exit(EXIT_FAILURE);
+    } catch (Rdata::ExBadSyntax) {}
+
+    string s("a.it.uc3m.es");
+    try {
+        datap = RdataNS::parse(s);
+    } catch (Rdata::ExBadSyntax) {
+        cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    ostringstream oss;
+    oss << *datap;
+    assert(oss.str().compare(s) == 0);
+    assert(Type::NS == datap->type());
+    assert(Klass::IN == datap->klass());
+    assert(datap->nsdname().compare("a.it.uc3m.es") == 0);
+    assert(s.length() == datap->length());
     delete datap;
 }
 
@@ -677,6 +716,22 @@ rdata_test(void)
     ossmx << *datap;
     assert(ossmx.str().compare(smx) == 0);
     delete datap;
+
+    // NS records
+    string sns("saruman.it.uc3m.es");
+    try {
+        datap = RdataNS::parse(sns);
+    } catch (Rdata::ExBadSyntax) {
+        cerr << "RdataNS::parse(\"" << sns << "\") throws  Rdata::ExBadSyntax" << endl;
+        exit(EXIT_FAILURE);
+    }
+    assert(datap->length() == sns.length());
+    assert(datap->type()  == Type::NS);
+    assert(datap->klass() == Klass::IN);
+    ostringstream ossns;
+    ossns << *datap;
+    assert(ossns.str().compare(sns) == 0);
+    delete datap;
 }
 
 int
@@ -687,6 +742,7 @@ main(int argc, char ** argv) {
     klass_test();
     rdataA_test();
     rdataMX_test();
+    rdataNS_test();
     rdata_test();
     rr_test();
 
