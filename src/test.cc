@@ -1,3 +1,4 @@
+#include "util.h"
 #include "rr.h"
 #include "rdata.h"
 #include "rdataA.h"
@@ -8,7 +9,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
 
 using std::cout;
 using std::cerr;
@@ -21,6 +21,248 @@ using rr::Klass;
 using rr::RdataA;
 using rr::RdataMX;
 using rr::Rdata;
+
+void
+util_test(void)
+{
+    // test for LD consistency
+    string ld(util::LETTER);
+    ld.append(util::DIGIT);
+    assert(ld.compare(util::LD) == 0);
+    
+    // test for LDH consistency
+    string ldh(ld);
+    ldh.append(util::HYP);
+    assert(ldh.compare(util::LDH) == 0);
+
+    // MIN_SLONG and MIN_SLONG
+    assert(util::MIN_SLONG == -2147483647);
+    assert(util::MAX_SLONG == 2147483647);
+
+    // str2sint32
+    signed long slong;
+    string minslong("-2147483647");
+    try {
+        slong = util::str2sint32(minslong);
+        assert(slong == util::MIN_SLONG);
+    } catch (string & s) {
+        cerr << "str2sint32(\"" << minslong << "\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+    string maxslong("2147483647");
+    try {
+        slong = util::str2sint32(maxslong);
+        assert(slong == util::MAX_SLONG);
+    } catch (string & s) {
+        cerr << "str2sint32(\"" << maxslong << "\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+    try {
+        slong = util::str2sint32("-2147483648");
+        assert(false && "util::str2sint32(\"-2147483648\") must have throw an exception and did not");
+    } catch (string & s) {}
+    try {
+        slong = util::str2sint32("2147483648");
+        assert(false && "util::str2sint32(\"2147483648\") must have throw an exception and did not");
+    } catch (string & s) {}
+    try {
+        slong = util::str2sint32("0");
+        assert(slong == 0);
+    } catch (string & s) {
+        cerr << "str2sint32(\"0\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+    try {
+        slong = util::str2sint32("234");
+        assert(slong == 234);
+    } catch (string & s) {
+        cerr << "str2sint32(\"234\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // MIN_USHORT and MIN_USHORT
+    assert(util::MIN_USHORT == 0);
+    assert(util::MAX_USHORT == 65535);
+
+    // str2uint16
+    unsigned short ushort;
+    string minushort("0");
+    try {
+        ushort = util::str2uint16(minushort);
+        assert(ushort == util::MIN_USHORT);
+    } catch (string & s) {
+        cerr << "str2uint16(\"" << minslong << "\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+    string maxushort("65535");
+    try {
+        ushort = util::str2uint16(maxushort);
+        assert(ushort == util::MAX_USHORT);
+    } catch (string & s) {
+        cerr << "str2uint16(\"" << maxushort << "\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+    try {
+        ushort = util::str2uint16("-1");
+        assert(false && "util::str2uint16(\"-1\") must have throw an exception and did not");
+    } catch (string & s) {}
+    try {
+        ushort = util::str2uint16("65536");
+        assert(false && "util::str2uint16(\"65536\") must have throw an exception and did not");
+    } catch (string & s) {}
+    try {
+        ushort = util::str2uint16("234");
+        assert(ushort == 234);
+    } catch (string & s) {
+        cerr << "str2uint16(\"234\") throws \"" << s << "\"" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // isLabel
+    bool r;
+    string const * sp;
+
+    sp = new string("hola");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(r && "isLabel(hola)");
+        
+    sp = new string("h12o-la");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(r && "isLabel(h12o-la)");
+        
+    sp = new string("h12.o-la");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(h12.o-la)");
+        
+    sp = new string("2h12o-la");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(2h12o-la)");
+        
+    sp = new string("-h12o-la");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(-12o-la)");
+        
+    sp = new string("h12o-la-");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(h12o-la-)");
+        
+    sp = new string("h12o-la3");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(r && "isLabel(h12o-la3)");
+
+    sp = new string(" ");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(\" \")");
+
+    sp = new string("");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(\"\")");
+
+    sp = new string("a23456789012345678901234567890123456789012345678901234567890123");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(r && "isLabel(63 octetos)");
+
+    sp = new string("1234567890123456789012345678901234567890123456789012345678901234");
+    r = util::isLabel(*sp);
+    delete sp;
+    assert(!r && "isLabel(64 octetos)");
+
+    sp = new string("it.uc3m.es.foo.bar");
+    r = util::isLabel(*sp, 11, 3);
+    delete sp;
+    assert(r && "isLabel(it.uc3m.es.foo.bar, 11, 3)");
+
+    // isDomainName
+    sp = new string("");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(\"\")");
+
+    sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(r && "isDomainName(255 octetos)");
+
+    sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a234567890123456");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(256 octetos)");
+
+    sp = new string(" ");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(r && "isDomainName(\" \")");
+
+    sp = new string("it");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(r && "isDomainName(it)");
+
+    sp = new string("it.uc3m");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(r && "isDomainName(it.uc3m)");
+
+    sp = new string("it.uc3m.es.foo.bar");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(r && "isDomainName(it.uc3m.es.foo.bar)");
+
+    sp = new string(".");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(.)");
+
+    sp = new string("it.uc3m.es.");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.uc3m.es.)");
+
+    sp = new string("it.uc3m..es");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.uc3m..es)");
+
+    sp = new string("it.uc3m.es..");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.uc3m.es..)");
+
+    sp = new string("it.uc3m...es");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.uc3m...es)");
+
+    sp = new string("it.uc3m.es...");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.uc3m.es...)");
+
+    sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
+
+    sp = new string("a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
+
+    sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234");
+    r = util::isDomainName(*sp);
+    delete sp;
+    assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234)");
+}
 
 void
 type_test(void)
@@ -440,6 +682,7 @@ rdata_test(void)
 int
 main(int argc, char ** argv) {
 
+    util_test();
     type_test();
     klass_test();
     rdataA_test();
