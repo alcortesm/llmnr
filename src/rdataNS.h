@@ -18,10 +18,14 @@ namespace rr {
         static RdataNS const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
         RdataNS(RdataNS const &);
         RdataNS & operator=(RdataNS const &);
+        ~RdataNS();
         std::string const & nsdname()  const;
         rr::Type  const & type()       const;
         rr::Klass const & klass()      const;
-        ~RdataNS();
+        
+        void marshalling(char * & offset) const; // offset is advanced
+        static RdataNS const * unmarshalling(char const * & offset) // offset is advanced
+            throw (rr::Rdata::ExBadSyntax);
     
     private:
         void printOn(std::ostream & s) const ;

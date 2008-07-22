@@ -14,10 +14,14 @@ namespace rr {
     public:
         static const unsigned short LENGTH = 4; // A registers use 4 octects, see rfc1035
         static RdataA const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
-        unsigned long  addr()   const;
+        ~RdataA();
+        unsigned long     addr() const;
         rr::Type  const & type() const;
         rr::Klass const & klass() const;
-        ~RdataA();
+
+        void marshalling(char * & offset) const; // offset is advanced
+        static RdataA const * unmarshalling(char const * & offset) // offset is advanced
+            throw (rr::Rdata::ExBadSyntax);
     
     private:
         void printOn(std::ostream & s) const ;

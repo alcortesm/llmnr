@@ -64,3 +64,29 @@ RdataA::printOn(std::ostream & s) const
 
     s << dst ;
 }
+
+void
+RdataA::marshalling(char * & offset) const
+{
+    if (this->length() == 0)
+        return;
+
+    char * last = offset + this->length() - 1;
+    for (; offset<=last; offset++)
+        *offset = 'a';
+
+    return;
+}
+
+RdataA const *
+RdataA::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
+{
+    if (*offset != 'a')
+        throw Rdata::ExBadSyntax();
+
+    RdataA const * dp = RdataA::parse("127.0.0.1");
+
+    offset += 5;
+
+    return dp;
+}

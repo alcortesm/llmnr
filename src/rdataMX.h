@@ -19,11 +19,15 @@ namespace rr {
         static RdataMX const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
         RdataMX(RdataMX const &);
         RdataMX & operator=(RdataMX const &);
+        ~RdataMX();
         unsigned short preference()    const;
         std::string const & exchange() const;
         rr::Type  const & type()       const;
         rr::Klass const & klass()      const;
-        ~RdataMX();
+        
+        void marshalling(char * & offset) const; // offset is advanced
+        static RdataMX const * unmarshalling(char const * & offset) // offset is advanced
+            throw (rr::Rdata::ExBadSyntax);
     
     private:
         static short const PREFERENCE_LENGTH = 2; // preference field is 16 bits = 2 octects
