@@ -7,3 +7,15 @@ should virtual destructors be public?
 read http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-like rules) and apply
 
 rdataCNAME, rdataSOA, rdataPTR
+
+
+
+
+
+
+make unmarshalling an inherited method of rdata
+
+change name from marshalling and unmarshalling to marshall and unmarshall
+
+make an operator== for rdata (read book or web before, it can be difficult!)
+make unmarshalling for rdataMX and rdataNS

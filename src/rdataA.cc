@@ -1,9 +1,9 @@
 #include "rdataA.h"
 
-// for inet_ntop
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 using std::string;
 using rr::RdataA;
@@ -68,25 +68,17 @@ RdataA::printOn(std::ostream & s) const
 void
 RdataA::marshalling(char * & offset) const
 {
-    if (this->length() == 0)
-        return;
-
-    char * last = offset + this->length() - 1;
-    for (; offset<=last; offset++)
-        *offset = 'a';
-
+    memcpy(offset, &d_addr, sizeof(uint32_t));
+    offset += sizeof(uint32_t);
     return;
 }
 
 RdataA const *
 RdataA::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
 {
-    if (*offset != 'a')
-        throw Rdata::ExBadSyntax();
-
-    RdataA const * dp = RdataA::parse("127.0.0.1");
-
-    offset += 5;
-
+    uint32_t a;
+    memcpy(&a, offset, sizeof(uint32_t));
+    RdataA const * dp = new RdataA(a);
+    offset += sizeof(uint32_t);
     return dp;
 }

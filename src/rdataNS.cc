@@ -14,7 +14,7 @@ RdataNS::RdataNS(string const & nsdname)
 RdataNS::RdataNS(RdataNS const & data)
     : Rdata::Rdata((unsigned short) data.nsdname().length())
 {
-        d_nsdnamep = new string(data.nsdname());
+    d_nsdnamep = new string(data.nsdname());
 }
 
 RdataNS &
@@ -61,3 +61,30 @@ RdataNS::printOn(std::ostream & s) const
 {
     s << *d_nsdnamep ;
 }
+
+void
+RdataNS::marshalling(char * & offset) const
+{
+    if (this->length() == 0)
+        return;
+
+    char * last = offset + this->length() - 1;
+    for (; offset<=last; offset++)
+        *offset = 'a';
+
+    return;
+}
+
+RdataNS const *
+RdataNS::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
+{
+    if (*offset != 'a')
+        throw Rdata::ExBadSyntax();
+
+    RdataNS const * dp = RdataNS::parse("it.uc3m.es");
+
+    offset += 11;
+
+    return dp;
+}
+
