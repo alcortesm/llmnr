@@ -17,14 +17,15 @@ namespace rr {
     public:
         class ExBadSyntax {};
         friend std::ostream & operator<<(std::ostream & s, rr::Rdata const & data);
+        friend bool operator==(rr::Rdata const & a, rr::Rdata const & b);
+        // parse(std::string s) should be a static function provided by subclasses
         virtual ~Rdata();
         unsigned short            length() const;
         virtual rr::Type  const & type()   const = 0;
         virtual rr::Klass const & klass()  const = 0;
 
         virtual void marshall(char * & offset) const = 0; // offset is advanced
-        static Rdata const * unmarshall(char const * & offset) // offset is advanced
-            throw (rr::Rdata::ExBadSyntax);
+        // unmarshall(char const * & offset) should be a static function provided by subclasses
     };
 }
 #endif
