@@ -25,8 +25,8 @@ namespace rr {
         virtual rr::Klass const & klass()  const = 0;
 
         virtual void marshalling(char * & offset) const = 0; // offset is advanced
-        //static Rdata const * unmarshalling(char const * & offset) // offset is advanced
-        //    throw (rr::Rdata::ExBadSyntax);
+        static Rdata const * unmarshalling(char const * & offset) // offset is advanced
+            throw (rr::Rdata::ExBadSyntax);
     };
 }
 #endif
