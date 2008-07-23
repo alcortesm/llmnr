@@ -1,6 +1,4 @@
 // Abstract class for the different DNS types
-//
-// There are two public constructors:
 
 #ifndef INCLUDED_RDATA
 #define INCLUDED_RDATA
@@ -24,8 +22,8 @@ namespace rr {
         virtual rr::Type  const & type()   const = 0;
         virtual rr::Klass const & klass()  const = 0;
 
-        virtual void marshalling(char * & offset) const = 0; // offset is advanced
-        static Rdata const * unmarshalling(char const * & offset) // offset is advanced
+        virtual void marshall(char * & offset) const = 0; // offset is advanced
+        static Rdata const * unmarshall(char const * & offset) // offset is advanced
             throw (rr::Rdata::ExBadSyntax);
     };
 }

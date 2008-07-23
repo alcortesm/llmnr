@@ -66,7 +66,7 @@ RdataA::printOn(std::ostream & s) const
 }
 
 void
-RdataA::marshalling(char * & offset) const
+RdataA::marshall(char * & offset) const
 {
     memcpy(offset, &d_addr, sizeof(uint32_t));
     offset += sizeof(uint32_t);
@@ -74,7 +74,7 @@ RdataA::marshalling(char * & offset) const
 }
 
 RdataA const *
-RdataA::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
+RdataA::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
 {
     uint32_t a;
     memcpy(&a, offset, sizeof(uint32_t));

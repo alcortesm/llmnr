@@ -605,14 +605,14 @@ rdataA_test(void)
         exit(EXIT_FAILURE);
     }
     char * offset = buf;
-    datap->marshalling(offset);
+    datap->marshall(offset);
     unsigned long na = datap->addr();
     assert(memcmp(buf, &na, sizeof(na)) == 0);
     assert(offset-buf == sizeof(unsigned long));
 
     //unmarshalling
     char const * coffset = buf;
-    RdataA const * ddp = RdataA::unmarshalling(coffset);
+    RdataA const * ddp = RdataA::unmarshall(coffset);
     na = ddp->addr();
     assert(memcmp(buf, &na, sizeof(na)) == 0);
     //assert(ddp == datap); //TODO: must add operator==

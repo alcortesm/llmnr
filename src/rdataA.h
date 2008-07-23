@@ -19,8 +19,8 @@ namespace rr {
         rr::Type  const & type() const;
         rr::Klass const & klass() const;
 
-        void marshalling(char * & offset) const; // offset is advanced
-        static RdataA const * unmarshalling(char const * & offset) // offset is advanced
+        void marshall(char * & offset) const; // offset is advanced
+        static RdataA const * unmarshall(char const * & offset) // offset is advanced
             throw (rr::Rdata::ExBadSyntax);
     
     private:

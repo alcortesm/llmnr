@@ -103,7 +103,7 @@ RdataMX::printOn(std::ostream & s) const
 }
 
 void
-RdataMX::marshalling(char * & offset) const
+RdataMX::marshall(char * & offset) const
 {
     if (this->length() == 0)
         return;
@@ -116,7 +116,7 @@ RdataMX::marshalling(char * & offset) const
 }
 
 RdataMX const *
-RdataMX::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
+RdataMX::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
 {
     if (*offset != 'a')
         throw Rdata::ExBadSyntax();

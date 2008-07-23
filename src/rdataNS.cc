@@ -63,7 +63,7 @@ RdataNS::printOn(std::ostream & s) const
 }
 
 void
-RdataNS::marshalling(char * & offset) const
+RdataNS::marshall(char * & offset) const
 {
     if (this->length() == 0)
         return;
@@ -76,7 +76,7 @@ RdataNS::marshalling(char * & offset) const
 }
 
 RdataNS const *
-RdataNS::unmarshalling(char const * & offset) throw (Rdata::ExBadSyntax)
+RdataNS::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
 {
     if (*offset != 'a')
         throw Rdata::ExBadSyntax();
