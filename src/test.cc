@@ -540,363 +540,425 @@ klass_test(void)
 void
 rr_test(void)
 {
-    string const * sp;
-    Rr     const * rrp;
-
-    // parse of an empty string must throw ExNoContent
-    sp = new string();
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of an empty string did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of an empty string launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
+    { // parse of an empty string must throw ExNoContent
+        string const * sp;
+        Rr     const * rrp;
+        sp = new string();
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of an empty string did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of an empty string launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
     }
-    delete sp;
 
-    // blank string must throw ExNoContent
-    sp = new string(" ");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string a space did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string with a space launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
+    { // blank string must throw ExNoContent
+        string const * sp;
+        Rr     const * rrp;
+        sp = new string(" ");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string a space did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string with a space launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+        
+        sp = new string("	");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string with a tab did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string with a tab launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+
+        sp = new string("  	 			   		    	");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string with blanks did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string with blanks launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
     }
-    delete sp;
 
-    sp = new string("	");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string with a tab did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string with a tab launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
+    { // comments must throw ExNoContent
+        string const * sp;
+        Rr     const * rrp;
+        sp = new string("#");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of string \"#\" did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of string \"#\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+
+        sp = new string("  	 	#		   		    	");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string with blanks and # did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string with blanks and # launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+
+        sp = new string("# this is a comment");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string \"this is a comment\" did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"this is a comment\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+
+        sp = new string(" 	#this is an indented comment");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse() of a string \" 	this is an indented comment\" did not launch an exception" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            // OK
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \" 	this is an indented comment\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
     }
-    delete sp;
 
-    sp = new string("  	 			   		    	");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string with blanks did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string with blanks launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
+    { // valid rr
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   200 IN  A   64.233.183.99  	");
+        try {
+            rrp = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        assert(rrp->name()     == "www.l.google.com.");
+        assert(&(rrp->klass()) == &(rr::Klass::IN));
+        assert(&(rrp->type())  == &(rr::Type::A));
+        assert(rrp->ttl()      == 200);
+        assert(rrp->rdata()    == "64.233.183.99");
+        
+        delete sp;
+        delete rrp;
     }
-    delete sp;
 
-    
-    // comments must throw ExNoContent
-    sp = new string("#");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of string \"#\" did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of string \"#\" launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
+    { // test the stream operator overload
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   200 IN  A   64.233.183.99  	");
+        try {
+            rrp = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        ostringstream oss;
+        oss << *rrp;
+        assert(oss.str() == "www.l.google.com.\t200\tIN\tA\t64.233.183.99");
+        
+        delete sp;
+        delete rrp;
     }
-    delete sp;
 
-    sp = new string("  	 	#		   		    	");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string with blanks and # did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string with blanks and # launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
-    }
-    delete sp;
-
-    sp = new string("# this is a comment");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string \"this is a comment\" did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string \"this is a comment\" launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
-    }
-    delete sp;
-
-    sp = new string(" 	#this is an indented comment");
-    try {
-        rrp = Rr::parse(*sp);
-        cerr << "Rr::parse() of a string \" 	this is an indented comment\" did not launch an exception" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExNoContent) {
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string \" 	this is an indented comment\" launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
-    }
-    delete sp;
-
-    // valid rr
-    sp = new string(" 	www.l.google.com.   200 IN  A   64.233.183.99  	");
-    try {
-        rrp = Rr::parse(*sp);
-    } catch (Rr::ExNoContent) {
-        cerr << "Rr::parse() of valid string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched an ExNoContent" << endl ;
-        exit(EXIT_FAILURE);
-    } catch (Rr::ExBadSyntax) {
-        cerr << "Rr::parse() of a string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched ExBadSyntax" << endl ;
-        exit(EXIT_FAILURE);
-    }
-    assert(rrp->name()     == "www.l.google.com.");
-    assert(&(rrp->klass()) == &(rr::Klass::IN));
-    assert(&(rrp->type())  == &(rr::Type::A));
-    assert(rrp->ttl()      == 200);
-    assert(rrp->rdata()    == "64.233.183.99");
-    
-    // test the stream operator overload
-    ostringstream oss;
-    oss << *rrp;
-    assert(oss.str() == "www.l.google.com.\t200\tIN\tA\t64.233.183.99");
-
-    delete rrp;
-    delete sp;
 }
 
 void
 rdataA_test(void)
 {
-    RdataA const * datap;
-
-    // bad sintax must throw an exception
-    try {
-        datap = RdataA::parse("hola");
-        cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (RdataA::ExBadSyntax) {}
-
-    // streaming a valid addr must give the same as the string from were it was parsed
-    // the addr must be the netwrok byte order version of the string
-    string s("163.117.141.12");
-    try {
-        datap = RdataA::parse(s);
-    } catch (RdataA::ExBadSyntax) {
-        cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
+    { // bad sintax must throw an exception
+        RdataA const * datap;
+        try {
+            datap = RdataA::parse("hola");
+            cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (RdataA::ExBadSyntax) {}
     }
-    ostringstream oss;
-    oss << *datap;
-    assert(oss.str() == s);
-    int r;
-    const char * cp = s.c_str();
-    struct in_addr in;
-    r = inet_aton(cp, &in);
-    if (r == 0) {
-        cerr << "error in test: inet_aton of " << s << " failed!" << endl;
-        exit(EXIT_FAILURE);
+
+
+    { // streaming a valid addr must give the same as the string from were it was parsed
+        // the addr must be the netwrok byte order version of the string
+        RdataA const * datap;
+        string s("163.117.141.12");
+        try {
+            datap = RdataA::parse(s);
+        } catch (RdataA::ExBadSyntax) {
+            cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        ostringstream oss;
+        oss << *datap;
+        assert(oss.str() == s);
+
+        int r;
+        const char * cp = s.c_str();
+        struct in_addr in;
+        r = inet_aton(cp, &in);
+        if (r == 0) {
+            cerr << "error in test: inet_aton of " << s << " failed!" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(in.s_addr == datap->addr());
+        assert(Type::A == datap->type());
+        assert(Klass::IN == datap->klass());
+        assert(RdataA::LENGTH == datap->length());
+
+        delete datap;
     }
-    assert(in.s_addr == datap->addr());
-    assert(Type::A == datap->type());
-    assert(Klass::IN == datap->klass());
-    assert(RdataA::LENGTH == datap->length());
 
     { // comparison
-    RdataA const * ap;
-    RdataA const * bp;
-    RdataA const * cp;
-    ap = RdataA::parse("1.2.3.4");
-    bp = RdataA::parse("1.2.3.4");
-    cp = RdataA::parse("1.5.3.4");
+        RdataA const * ap;
+        RdataA const * bp;
+        RdataA const * cp;
+        ap = RdataA::parse("1.2.3.4");
+        bp = RdataA::parse("1.2.3.4");
+        cp = RdataA::parse("1.5.3.4");
 
-    assert(*ap == *ap);
-    assert(*bp == *bp);
-    assert(*cp == *cp);
-    assert(*ap == *bp);
-    assert(*bp == *ap);
-    assert((*ap == *cp) == false);
-    assert((*cp == *ap) == false);
-    assert((*cp == *bp) == false);
-    assert((*bp == *cp) == false);
-    
-    assert((*ap != *ap) == false);
-    assert((*bp != *bp) == false);
-    assert((*cp != *cp) == false);
-    assert((*ap != *bp) == false);
-    assert((*bp != *ap) == false);
-    assert(*ap != *cp);
-    assert(*cp != *ap);
-    assert(*cp != *bp);
-    assert(*bp != *cp);
+        assert(*ap == *ap);
+        assert(*bp == *bp);
+        assert(*cp == *cp);
+        assert(*ap == *bp);
+        assert(*bp == *ap);
+        assert((*ap == *cp) == false);
+        assert((*cp == *ap) == false);
+        assert((*cp == *bp) == false);
+        assert((*bp == *cp) == false);
 
-    delete ap;
-    delete bp;
-    delete cp;
+        assert((*ap != *ap) == false);
+        assert((*bp != *bp) == false);
+        assert((*cp != *cp) == false);
+        assert((*ap != *bp) == false);
+        assert((*bp != *ap) == false);
+        assert(*ap != *cp);
+        assert(*cp != *ap);
+        assert(*cp != *bp);
+        assert(*bp != *cp);
+
+        delete ap;
+        delete bp;
+        delete cp;
     }
-    
 
-    //marshalling
-    char * buf = (char *) calloc(100, sizeof(char));
-    if (buf == 0) {
-        cerr << "error in test: calloc failed" << endl;
-        exit(EXIT_FAILURE);
+
+    { //marshalling
+        RdataA const * datap;
+        string s("163.117.141.12");
+        try {
+            datap = RdataA::parse(s);
+        } catch (RdataA::ExBadSyntax) {
+            cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * buf = (char *) calloc(100, sizeof(char));
+        if (buf == 0) {
+            cerr << "error in test: calloc failed" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * offset = buf;
+        datap->marshall(offset);
+        unsigned long na = datap->addr();
+        assert(memcmp(buf, &na, sizeof(na)) == 0);
+        assert(offset-buf == sizeof(unsigned long));
+
+        //unmarshalling
+        char const * coffset = buf;
+        RdataA const * ddp = RdataA::unmarshall(coffset);
+        na = ddp->addr();
+        assert(memcmp(buf, &na, sizeof(na)) == 0);
+        assert(*ddp == *datap);
+        assert((coffset-buf) == sizeof(unsigned long));
+        delete ddp;
+        free(buf);
+
+        delete datap;
     }
-    char * offset = buf;
-    datap->marshall(offset);
-    unsigned long na = datap->addr();
-    assert(memcmp(buf, &na, sizeof(na)) == 0);
-    assert(offset-buf == sizeof(unsigned long));
-
-    //unmarshalling
-    char const * coffset = buf;
-    RdataA const * ddp = RdataA::unmarshall(coffset);
-    na = ddp->addr();
-    assert(memcmp(buf, &na, sizeof(na)) == 0);
-    assert(*ddp == *datap);
-    assert((coffset-buf) == sizeof(unsigned long));
-    delete ddp;
-    free(buf);
-    
-    delete datap;
 }
 
 void
 rdataMX_test(void)
 {
-    RdataMX const * datap;
+    { // bad sintax must throw an exception
+        RdataMX const * datap;
 
-    // bad sintax must throw an exception
-    try {
-        datap = RdataMX::parse("0it.uc3m.es");
-        cerr << "RdataMX::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-    try {
-        datap = RdataMX::parse("-2 it.uc3m.es");
-        cerr << "RdataMX::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-    try {
-        datap = RdataMX::parse("9999999 it.uc3m.es");
-        cerr << "RdataMX::parse(\"9999999 it.uc3m.es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-    try {
-        datap = RdataMX::parse("0 it.uc3m. es");
-        cerr << "RdataMX::parse(\"0 it.uc3m .es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-
-    string s("0 it.uc3m.es");
-    try {
-        datap = RdataMX::parse(s);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
+        try {
+            datap = RdataMX::parse("0it.uc3m.es");
+            cerr << "RdataMX::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
+        try {
+            datap = RdataMX::parse("-2 it.uc3m.es");
+            cerr << "RdataMX::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
+        try {
+            datap = RdataMX::parse("9999999 it.uc3m.es");
+            cerr << "RdataMX::parse(\"9999999 it.uc3m.es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
+        try {
+            datap = RdataMX::parse("0 it.uc3m. es");
+            cerr << "RdataMX::parse(\"0 it.uc3m .es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
     }
-    ostringstream oss;
-    oss << *datap;
-    assert(oss.str().compare(s) == 0);
-    assert(Type::MX == datap->type());
-    assert(Klass::IN == datap->klass());
-    assert(datap->preference() == 0);
-    assert(datap->exchange().compare("it.uc3m.es") == 0);
-    assert(s.length()-2+2 == datap->length());
-    delete datap;
+
+    { // good syntax, basic functions and streaming
+        RdataMX const * datap;
+        string s("0 it.uc3m.es");
+        try {
+            datap = RdataMX::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        ostringstream oss;
+        oss << *datap;
+        assert(oss.str().compare(s) == 0);
+        assert(Type::MX == datap->type());
+        assert(Klass::IN == datap->klass());
+        assert(datap->preference() == 0);
+        assert(datap->exchange().compare("it.uc3m.es") == 0);
+        assert(s.length()-2+2 == datap->length());
+        delete datap;
+    }
 }
 
 void
 rdataNS_test(void)
 {
-    RdataNS const * datap;
+    { // bad sintax must throw an exception
+        RdataNS const * datap;
 
-    // bad sintax must throw an exception
-    try {
-        datap = RdataNS::parse("0it.uc3m.es");
-        cerr << "RdataNS::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-    try {
-        datap = RdataNS::parse("-2 it.uc3m.es");
-        cerr << "RdataNS::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
-        exit(EXIT_FAILURE);
-    } catch (Rdata::ExBadSyntax) {}
-
-    string s("a.it.uc3m.es");
-    try {
-        datap = RdataNS::parse(s);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
+        try {
+            datap = RdataNS::parse("0it.uc3m.es");
+            cerr << "RdataNS::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
+        try {
+            datap = RdataNS::parse("-2 it.uc3m.es");
+            cerr << "RdataNS::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rdata::ExBadSyntax) {}
     }
-    ostringstream oss;
-    oss << *datap;
-    assert(oss.str().compare(s) == 0);
-    assert(Type::NS == datap->type());
-    assert(Klass::IN == datap->klass());
-    assert(datap->nsdname().compare("a.it.uc3m.es") == 0);
-    assert(s.length() == datap->length());
-    delete datap;
+
+    { // good syntax, basic functions and streaming
+        RdataNS const * datap;
+        string s("a.it.uc3m.es");
+        try {
+            datap = RdataNS::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        ostringstream oss;
+        oss << *datap;
+        assert(oss.str().compare(s) == 0);
+        assert(Type::NS == datap->type());
+        assert(Klass::IN == datap->klass());
+        assert(datap->nsdname().compare("a.it.uc3m.es") == 0);
+        assert(s.length() == datap->length());
+        delete datap;
+    }
 }
 
 void
 rdata_test(void)
 {
-    Rdata const * datap;
+    { // A records
+        Rdata const * datap;
+        string sa("163.117.141.15");
+        try {
+            datap = RdataA::parse(sa);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataA::parse(\"" << sa << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(datap->length() == RdataA::LENGTH);
+        assert(datap->type() == Type::A);
+        assert(datap->klass() == Klass::IN);
+        // streaming thorugh base class must be the same as through derived calss
+        ostringstream ossa;
+        ossa << *datap;
+        assert(ossa.str() == sa);
+        delete datap;
+    }
 
-    // A records
-    string sa("163.117.141.15");
-    try {
-        datap = RdataA::parse(sa);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataA::parse(\"" << sa << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
+    { // MX records
+        Rdata const * datap;
+        string smx("0 saruman.it.uc3m.es");
+        try {
+            datap = RdataMX::parse(smx);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(datap->length() == smx.length()-2+2);
+        assert(datap->type()  == Type::MX);
+        assert(datap->klass() == Klass::IN);
+        ostringstream ossmx;
+        ossmx << *datap;
+        assert(ossmx.str().compare(smx) == 0);
+        delete datap;
     }
-    assert(datap->length() == RdataA::LENGTH);
-    assert(datap->type() == Type::A);
-    assert(datap->klass() == Klass::IN);
-    // streaming thorugh base class must be the same as through derived calss
-    ostringstream ossa;
-    ossa << *datap;
-    assert(ossa.str() == sa);
-    delete datap;
-    
-    // MX records
-    string smx("0 saruman.it.uc3m.es");
-    try {
-        datap = RdataMX::parse(smx);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
-    }
-    assert(datap->length() == smx.length()-2+2);
-    assert(datap->type()  == Type::MX);
-    assert(datap->klass() == Klass::IN);
-    ostringstream ossmx;
-    ossmx << *datap;
-    assert(ossmx.str().compare(smx) == 0);
-    delete datap;
 
-    // NS records
-    string sns("saruman.it.uc3m.es");
-    try {
-        datap = RdataNS::parse(sns);
-    } catch (Rdata::ExBadSyntax) {
-        cerr << "RdataNS::parse(\"" << sns << "\") throws  Rdata::ExBadSyntax" << endl;
-        exit(EXIT_FAILURE);
+    { // NS records
+        Rdata const * datap;
+        string sns("saruman.it.uc3m.es");
+        try {
+            datap = RdataNS::parse(sns);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << sns << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(datap->length() == sns.length());
+        //assert(datap->type()  == Type::NS);
+        //assert(datap->klass() == Klass::IN);
+        ostringstream ossns;
+        ossns << *datap;
+        assert(ossns.str().compare(sns) == 0);
+        delete datap;
     }
-    assert(datap->length() == sns.length());
-    //assert(datap->type()  == Type::NS);
-    //assert(datap->klass() == Klass::IN);
-    ostringstream ossns;
-    ossns << *datap;
-    assert(ossns.str().compare(sns) == 0);
-    delete datap;
 }
 
 int
