@@ -18,6 +18,8 @@ namespace rr {
         unsigned long     addr() const; // in network byte order
         rr::Type  const & type() const;
         rr::Klass const & klass() const;
+        friend bool rr::operator==(rr::RdataA const & a, rr::RdataA const & b);
+        friend bool rr::operator!=(rr::RdataA const & a, rr::RdataA const & b);
 
         void marshall(char * & offset) const; // offset is advanced
         static RdataA const * unmarshall(char const * & offset) // offset is advanced

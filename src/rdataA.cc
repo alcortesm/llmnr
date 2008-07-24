@@ -82,3 +82,16 @@ RdataA::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
     offset += sizeof(uint32_t);
     return dp;
 }
+
+bool
+rr::operator==(rr::RdataA const & a, rr::RdataA const & b)
+{
+    return a.addr() == b.addr();
+}
+
+bool
+rr::operator!=(rr::RdataA const & a, rr::RdataA const & b)
+{
+    return ! (a == b);
+}
+

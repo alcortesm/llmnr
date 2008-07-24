@@ -17,7 +17,8 @@ namespace rr {
     public:
         class ExBadSyntax {};
         friend std::ostream & operator<<(std::ostream & s, rr::Rdata const & data);
-        friend bool operator==(rr::Rdata const & a, rr::Rdata const & b);
+        // friend bool operator==(rr::Rdata const & a, rr::Rdata const & b); should be provided by subclasses
+        // friend bool operator!=(rr::Rdata const & a, rr::Rdata const & b); should be provided by subclasses
         // parse(std::string s) should be a static function provided by subclasses
         virtual ~Rdata();
         unsigned short            length() const;

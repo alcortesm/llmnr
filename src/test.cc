@@ -598,6 +598,40 @@ rdataA_test(void)
     assert(Klass::IN == datap->klass());
     assert(RdataA::LENGTH == datap->length());
 
+    { // comparison
+    RdataA const * ap;
+    RdataA const * bp;
+    RdataA const * cp;
+    ap = RdataA::parse("1.2.3.4");
+    bp = RdataA::parse("1.2.3.4");
+    cp = RdataA::parse("1.5.3.4");
+
+    assert(*ap == *ap);
+    assert(*bp == *bp);
+    assert(*cp == *cp);
+    assert(*ap == *bp);
+    assert(*bp == *ap);
+    assert((*ap == *cp) == false);
+    assert((*cp == *ap) == false);
+    assert((*cp == *bp) == false);
+    assert((*bp == *cp) == false);
+    
+    assert((*ap != *ap) == false);
+    assert((*bp != *bp) == false);
+    assert((*cp != *cp) == false);
+    assert((*ap != *bp) == false);
+    assert((*bp != *ap) == false);
+    assert(*ap != *cp);
+    assert(*cp != *ap);
+    assert(*cp != *bp);
+    assert(*bp != *cp);
+
+    delete ap;
+    delete bp;
+    delete cp;
+    }
+    
+
     //marshalling
     char * buf = (char *) calloc(100, sizeof(char));
     if (buf == 0) {
@@ -615,7 +649,7 @@ rdataA_test(void)
     RdataA const * ddp = RdataA::unmarshall(coffset);
     na = ddp->addr();
     assert(memcmp(buf, &na, sizeof(na)) == 0);
-    //assert(ddp == datap); //TODO: must add operator==
+    assert(*ddp == *datap);
     assert((coffset-buf) == sizeof(unsigned long));
     delete ddp;
     free(buf);

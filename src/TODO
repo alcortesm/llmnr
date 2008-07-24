@@ -12,6 +12,5 @@ rdataCNAME, rdataSOA, rdataPTR
 
 
 
-
-make an operator== for rdata (read book or web before, it can be difficult!)
-make unmarshalling for rdataMX and rdataNS
+make operator== and operator!= for rdataMX and rdataNS
+make marshall/unmarshall for rdataMX and rdataNS
