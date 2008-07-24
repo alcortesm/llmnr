@@ -5,16 +5,18 @@
 
 namespace util {
     
-    signed long    const MAX_SLONG  = ((1<<31) - 1);
-    signed long    const MIN_SLONG  = ((-1) * MAX_SLONG);
-    unsigned short const MAX_USHORT = ((1<<16) - 1);
-    unsigned short const MIN_USHORT = 0;
+    signed long    const MAX_SLONG  = ((1<<31) - 1);      //  2147483647
+    signed long    const MIN_SLONG  = ((-1) * MAX_SLONG); // -2147483647
+    unsigned short const MAX_USHORT = ((1<<16) - 1);      //  65535
+    unsigned short const MIN_USHORT = 0;                  //  0
 
+    // see RFC1035 section 2.3.4.
     unsigned short const MIN_DNAME_SIZE = 1;
     unsigned short const MAX_DNAME_SIZE = 255;
     unsigned short const MIN_LABEL_SIZE = 1;
     unsigned short const MAX_LABEL_SIZE = 63;
 
+    // see RFC1035 section 2.3.1.
     std::string const DOT      = ".";
     std::string const HYP      = "-";
     std::string const DIGIT    = "0123456789";

@@ -713,7 +713,7 @@ rdataA_test(void)
             datap = RdataA::parse("hola");
             cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
             exit(EXIT_FAILURE);
-        } catch (RdataA::ExBadSyntax) {}
+        } catch (Rdata::ExBadSyntax) {}
     }
 
 
@@ -723,7 +723,7 @@ rdataA_test(void)
         string s("163.117.141.12");
         try {
             datap = RdataA::parse(s);
-        } catch (RdataA::ExBadSyntax) {
+        } catch (Rdata::ExBadSyntax) {
             cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
             exit(EXIT_FAILURE);
         }
@@ -786,7 +786,7 @@ rdataA_test(void)
         string s("163.117.141.12");
         try {
             datap = RdataA::parse(s);
-        } catch (RdataA::ExBadSyntax) {
+        } catch (Rdata::ExBadSyntax) {
             cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
             exit(EXIT_FAILURE);
         }
@@ -988,6 +988,76 @@ rdataNS_test(void)
 
         delete ap;
         delete cp;
+    }
+    
+    { //marshalling
+        RdataNS const * beforep;
+        string s("ns.it.uc3m.es");
+        try {
+            beforep = RdataNS::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * buf = (char *) calloc(100, sizeof(char));
+        if (buf == 0) {
+            cerr << "error in test: calloc failed" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * offset = buf;
+        beforep->marshall(offset);
+        char ns[15] = { '\x02', 'n', 's', '\x02', 'i', 't', '\x04', 'u', 'c', '3', 'm', '\x02', 'e', 's', '\x00'};
+        assert(memcmp(buf, &ns, sizeof(ns)) == 0);
+        assert(offset-buf == sizeof(ns));
+
+        //unmarshalling
+        char const * coffset = buf;
+        RdataNS const * afterp;
+        try {
+            afterp = RdataNS::unmarshall(coffset);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(*afterp == *beforep);
+        assert((coffset-buf) == sizeof(ns));
+        free(buf);
+
+        delete afterp;
+        delete beforep;
+    }
+    
+    { // more marshalling, big name
+        RdataNS const * beforep;
+        string s("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+        try {
+            beforep = RdataNS::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * buf = (char *) calloc(300, sizeof(char));
+        if (buf == 0) {
+            cerr << "error in test: calloc failed" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * offset = buf;
+        beforep->marshall(offset);
+
+        //unmarshalling
+        char const * coffset = buf;
+        RdataNS const * afterp;
+        try {
+            afterp = RdataNS::unmarshall(coffset);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(*afterp == *beforep);
+        free(buf);
+
+        delete afterp;
+        delete beforep;
     }
 }
 

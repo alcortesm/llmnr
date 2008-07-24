@@ -9,4 +9,7 @@ read http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-lik
 rdataCNAME, rdataSOA, rdataPTR
 
 
-make marshall/unmarshall for rdataMX and rdataNS
+
+make dnsname2buf and buf2dnsname on util and test a lot!
+change marshall/unmarshall of rdataNS to use dnsname2buf and buf2dnsname
+make marshall/unmarshall for rdataMX
