@@ -9,8 +9,4 @@ read http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-lik
 rdataCNAME, rdataSOA, rdataPTR
 
 
-
-
-
-make operator== and operator!= for rdataMX and rdataNS
 make marshall/unmarshall for rdataMX and rdataNS

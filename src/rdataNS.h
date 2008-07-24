@@ -22,6 +22,8 @@ namespace rr {
         std::string const & nsdname()  const;
         rr::Type  const & type()       const;
         rr::Klass const & klass()      const;
+        friend bool rr::operator==(rr::RdataNS const & a, rr::RdataNS const & b);
+        friend bool rr::operator!=(rr::RdataNS const & a, rr::RdataNS const & b);
         
         void marshall(char * & offset) const; // offset is advanced
         static RdataNS const * unmarshall(char const * & offset) // offset is advanced

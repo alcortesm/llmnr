@@ -18,12 +18,14 @@ namespace rr {
     public:
         static RdataMX const * parse(std::string const & s) throw (rr::Rdata::ExBadSyntax);
         RdataMX(RdataMX const &);
-        RdataMX & operator=(RdataMX const &);
+        RdataMX const & operator=(RdataMX const &);
         ~RdataMX();
         unsigned short preference()    const;
         std::string const & exchange() const;
         rr::Type  const & type()       const;
         rr::Klass const & klass()      const;
+        friend bool rr::operator==(rr::RdataMX const & a, rr::RdataMX const & b);
+        friend bool rr::operator!=(rr::RdataMX const & a, rr::RdataMX const & b);
         
         void marshall(char * & offset) const; // offset is advanced
         static RdataMX const * unmarshall(char const * & offset) // offset is advanced

@@ -862,6 +862,57 @@ rdataMX_test(void)
         assert(s.length()-2+2 == datap->length());
         delete datap;
     }
+
+    { // comparison
+        RdataMX const * ap;
+        RdataMX const * cp;
+        RdataMX const * dp;
+
+        string s("0 it.uc3m.es");
+        try {
+            ap = RdataMX::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        RdataMX const b = *ap;
+        string ss("0 lab.it.uc3m.es");
+        try {
+            cp = RdataMX::parse(ss);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << ss << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        string sss("10 it.uc3m.es");
+        try {
+            dp = RdataMX::parse(sss);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << sss << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        assert(*ap == *ap);
+        assert(*ap == b);
+        assert(b == *ap);
+        assert(!(*ap == *cp));
+        assert(!(*cp == *ap));
+        assert(!(b == *cp));
+        assert(!(*cp == b));
+        assert(!(*ap == *dp));
+        assert(!(*dp == *ap));
+
+        assert(*ap != *cp);
+        assert(*cp != *ap);
+        assert(*ap != *dp);
+        assert(*dp != *ap);
+        assert(!(b != b));
+        assert(!(*ap != b));
+        assert(!(b != *ap));
+
+        delete ap;
+        delete cp;
+        delete dp;
+    }
 }
 
 void
@@ -899,6 +950,44 @@ rdataNS_test(void)
         assert(datap->nsdname().compare("a.it.uc3m.es") == 0);
         assert(s.length() == datap->length());
         delete datap;
+    }
+
+    { // comparison
+        RdataNS const * ap;
+        RdataNS const * cp;
+
+        string s("it.uc3m.es");
+        try {
+            ap = RdataNS::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        RdataNS const b = *ap;
+        string ss("lab.it.uc3m.es");
+        try {
+            cp = RdataNS::parse(ss);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataNS::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        assert(*ap == *ap);
+        assert(*ap == b);
+        assert(b == *ap);
+        assert(!(*ap == *cp));
+        assert(!(*cp == *ap));
+        assert(!(b == *cp));
+        assert(!(*cp == b));
+
+        assert(*ap != *cp);
+        assert(*cp != *ap);
+        assert(!(b != b));
+        assert(!(*ap != b));
+        assert(!(b != *ap));
+
+        delete ap;
+        delete cp;
     }
 }
 

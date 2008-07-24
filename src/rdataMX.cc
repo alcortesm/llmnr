@@ -19,7 +19,7 @@ RdataMX::RdataMX(RdataMX const & data)
         d_exchangep = new string(data.exchange());
 }
 
-RdataMX &
+RdataMX const &
 RdataMX::operator=(RdataMX const & data)
 {
     RdataMX * rp = new RdataMX(data);
@@ -127,4 +127,21 @@ RdataMX::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
 
     return dp;
 }
+
+bool
+rr::operator==(rr::RdataMX const & a, rr::RdataMX const & b)
+{
+    if (a.preference() != b.preference())
+        return false;
+    if (a.exchange().compare(b.exchange()) != 0)
+        return false;
+    return true;
+}
+
+bool
+rr::operator!=(rr::RdataMX const & a, rr::RdataMX const & b)
+{
+    return ! (a == b);
+}
+
 

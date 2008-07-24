@@ -88,3 +88,18 @@ RdataNS::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
     return dp;
 }
 
+bool
+rr::operator==(rr::RdataNS const & a, rr::RdataNS const & b)
+{
+    if (a.nsdname().compare(b.nsdname()) != 0)
+        return false;
+    return true;
+}
+
+bool
+rr::operator!=(rr::RdataNS const & a, rr::RdataNS const & b)
+{
+    return ! (a == b);
+}
+
+
