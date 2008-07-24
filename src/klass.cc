@@ -9,7 +9,10 @@ typedef NameMap::value_type NameMapPair;
 typedef std::map<unsigned short, Klass const *> ValueMap;
 typedef ValueMap::value_type ValueMapPair;
 
-Klass const Klass::IN = Klass( 1, "IN");     //RFC 1035 - host address
+Klass const Klass::IN = Klass( 1, "IN");
+Klass const Klass::CS = Klass( 2, "CS");
+Klass const Klass::CH = Klass( 3, "CH");
+Klass const Klass::HS = Klass( 4, "HS");
 
 template<typename T, std::size_t z>
 std::size_t size(T const (&a)[z]) {
@@ -17,12 +20,18 @@ std::size_t size(T const (&a)[z]) {
 }
 
 ValueMapPair const Klass::valueMapInitializer[] = {
-    ValueMapPair(Klass::IN.value(), &(Klass::IN))
+    ValueMapPair(Klass::IN.value(), &(Klass::IN)),
+    ValueMapPair(Klass::CS.value(), &(Klass::CS)),
+    ValueMapPair(Klass::CH.value(), &(Klass::CH)),
+    ValueMapPair(Klass::HS.value(), &(Klass::HS))
 };
 ValueMap const Klass::valueMap(valueMapInitializer, valueMapInitializer + size(valueMapInitializer));
 
 NameMapPair const Klass::nameMapInitializer[] = {
-    NameMapPair(Klass::IN.name(), &(Klass::IN))
+    NameMapPair(Klass::IN.name(), &(Klass::IN)),
+    NameMapPair(Klass::CS.name(), &(Klass::CS)),
+    NameMapPair(Klass::CH.name(), &(Klass::CH)),
+    NameMapPair(Klass::HS.name(), &(Klass::HS)),
 };
 NameMap const Klass::nameMap(nameMapInitializer, nameMapInitializer + size(nameMapInitializer)); 
 
@@ -69,4 +78,10 @@ int
 rr::operator==(Klass const & a, Klass const & b)
 {
     return (&a == &b);
+}
+
+int
+rr::operator!=(Klass const & a, Klass const & b)
+{
+    return ! (a == b);
 }

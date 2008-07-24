@@ -28,253 +28,286 @@ using rr::Rdata;
 void
 util_test(void)
 {
-    // test for LD consistency
-    string ld(util::LETTER);
-    ld.append(util::DIGIT);
-    assert(ld.compare(util::LD) == 0);
+    { // test for LD consistency
+        string ld(util::LETTER);
+        ld.append(util::DIGIT);
+        assert(ld.compare(util::LD) == 0);
+    }
     
-    // test for LDH consistency
-    string ldh(ld);
-    ldh.append(util::HYP);
-    assert(ldh.compare(util::LDH) == 0);
+    { // test for LDH consistency
+        string ldh(util::LD);
+        ldh.append(util::HYP);
+        assert(ldh.compare(util::LDH) == 0);
+    }
 
     // MIN_SLONG and MIN_SLONG
     assert(util::MIN_SLONG == -2147483647);
     assert(util::MAX_SLONG == 2147483647);
 
-    // str2sint32
-    signed long slong;
-    string minslong("-2147483647");
-    try {
-        slong = util::str2sint32(minslong);
-        assert(slong == util::MIN_SLONG);
-    } catch (string & s) {
-        cerr << "str2sint32(\"" << minslong << "\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
-    }
-    string maxslong("2147483647");
-    try {
-        slong = util::str2sint32(maxslong);
-        assert(slong == util::MAX_SLONG);
-    } catch (string & s) {
-        cerr << "str2sint32(\"" << maxslong << "\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
-    }
-    try {
-        slong = util::str2sint32("-2147483648");
-        assert(false && "util::str2sint32(\"-2147483648\") must have throw an exception and did not");
-    } catch (string & s) {}
-    try {
-        slong = util::str2sint32("2147483648");
-        assert(false && "util::str2sint32(\"2147483648\") must have throw an exception and did not");
-    } catch (string & s) {}
-    try {
-        slong = util::str2sint32("0");
-        assert(slong == 0);
-    } catch (string & s) {
-        cerr << "str2sint32(\"0\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
-    }
-    try {
-        slong = util::str2sint32("234");
-        assert(slong == 234);
-    } catch (string & s) {
-        cerr << "str2sint32(\"234\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
+    { // str2sint32
+        signed long slong;
+        string minslong("-2147483647");
+        try {
+            slong = util::str2sint32(minslong);
+            assert(slong == util::MIN_SLONG);
+        } catch (string & s) {
+            cerr << "str2sint32(\"" << minslong << "\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        string maxslong("2147483647");
+        try {
+            slong = util::str2sint32(maxslong);
+            assert(slong == util::MAX_SLONG);
+        } catch (string & s) {
+            cerr << "str2sint32(\"" << maxslong << "\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        try {
+            slong = util::str2sint32("-2147483648");
+            assert(false && "util::str2sint32(\"-2147483648\") must have throw an exception and did not");
+        } catch (string & s) {}
+        
+        try {
+            slong = util::str2sint32("2147483648");
+            assert(false && "util::str2sint32(\"2147483648\") must have throw an exception and did not");
+        } catch (string & s) {}
+        
+        try {
+            slong = util::str2sint32("0");
+            assert(slong == 0);
+        } catch (string & s) {
+            cerr << "str2sint32(\"0\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
+    
+        try {
+            slong = util::str2sint32("234");
+            assert(slong == 234);
+        } catch (string & s) {
+            cerr << "str2sint32(\"234\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
     }
 
     // MIN_USHORT and MIN_USHORT
     assert(util::MIN_USHORT == 0);
     assert(util::MAX_USHORT == 65535);
 
-    // str2uint16
-    unsigned short ushort;
-    string minushort("0");
-    try {
-        ushort = util::str2uint16(minushort);
-        assert(ushort == util::MIN_USHORT);
-    } catch (string & s) {
-        cerr << "str2uint16(\"" << minslong << "\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
+    { // str2uint16
+        unsigned short ushort;
+        string minushort("0");
+        try {
+            ushort = util::str2uint16(minushort);
+            assert(ushort == util::MIN_USHORT);
+        } catch (string & s) {
+            cerr << "str2uint16(\"" << minushort << "\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
+       
+        string maxushort("65535");
+        try {
+            ushort = util::str2uint16(maxushort);
+            assert(ushort == util::MAX_USHORT);
+        } catch (string & s) {
+            cerr << "str2uint16(\"" << maxushort << "\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        try {
+            ushort = util::str2uint16("-1");
+            assert(false && "util::str2uint16(\"-1\") must have throw an exception and did not");
+        } catch (string & s) {}
+        
+        try {
+            ushort = util::str2uint16("65536");
+            assert(false && "util::str2uint16(\"65536\") must have throw an exception and did not");
+        } catch (string & s) {}
+       
+        try {
+            ushort = util::str2uint16("234");
+            assert(ushort == 234);
+        } catch (string & s) {
+            cerr << "str2uint16(\"234\") throws \"" << s << "\"" << endl;
+            exit(EXIT_FAILURE);
+        }
     }
-    string maxushort("65535");
-    try {
-        ushort = util::str2uint16(maxushort);
-        assert(ushort == util::MAX_USHORT);
-    } catch (string & s) {
-        cerr << "str2uint16(\"" << maxushort << "\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
+
+    { // isLabel
+        bool r;
+        string const * sp;
+
+        sp = new string("hola");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(r && "isLabel(hola)");
+        
+        sp = new string("h12o-la");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(r && "isLabel(h12o-la)");
+        
+        sp = new string("h12.o-la");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(h12.o-la)");
+        
+        sp = new string("2h12o-la");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(2h12o-la)");
+        
+        sp = new string("-h12o-la");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(-12o-la)");
+            
+        sp = new string("h12o-la-");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(h12o-la-)");
+        
+        sp = new string("h12o-la3");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(r && "isLabel(h12o-la3)");
+
+        sp = new string(" ");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(\" \")");
+
+        sp = new string("");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(\"\")");
+
+        sp = new string("a23456789012345678901234567890123456789012345678901234567890123");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(r && "isLabel(63 octetos)");
+
+        sp = new string("1234567890123456789012345678901234567890123456789012345678901234");
+        r = util::isLabel(*sp);
+        delete sp;
+        assert(!r && "isLabel(64 octetos)");
+
+        sp = new string("it.uc3m.es.foo.bar");
+        r = util::isLabel(*sp, 11, 3);
+        delete sp;
+        assert(r && "isLabel(it.uc3m.es.foo.bar, 11, 3)");
     }
-    try {
-        ushort = util::str2uint16("-1");
-        assert(false && "util::str2uint16(\"-1\") must have throw an exception and did not");
-    } catch (string & s) {}
-    try {
-        ushort = util::str2uint16("65536");
-        assert(false && "util::str2uint16(\"65536\") must have throw an exception and did not");
-    } catch (string & s) {}
-    try {
-        ushort = util::str2uint16("234");
-        assert(ushort == 234);
-    } catch (string & s) {
-        cerr << "str2uint16(\"234\") throws \"" << s << "\"" << endl;
-        exit(EXIT_FAILURE);
+
+    { // isDomainName
+        string * sp;
+        sp = new string("");
+        int r;
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(\"\")");
+
+        sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(r && "isDomainName(255 octetos)");
+
+        sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a234567890123456");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(256 octetos)");
+
+        sp = new string(" ");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(r && "isDomainName(\" \")");
+
+        sp = new string("it");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(r && "isDomainName(it)");
+
+        sp = new string("it.uc3m");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(r && "isDomainName(it.uc3m)");
+
+        sp = new string("it.uc3m.es.foo.bar");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(r && "isDomainName(it.uc3m.es.foo.bar)");
+
+        sp = new string(".");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(.)");
+
+        sp = new string("it.uc3m.es.");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.uc3m.es.)");
+
+        sp = new string("it.uc3m..es");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.uc3m..es)");
+
+        sp = new string("it.uc3m.es..");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.uc3m.es..)");
+
+        sp = new string("it.uc3m...es");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.uc3m...es)");
+
+        sp = new string("it.uc3m.es...");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.uc3m.es...)");
+
+        sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
+
+        sp = new string("a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
+
+        sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234");
+        r = util::isDomainName(*sp);
+        delete sp;
+        assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234)");
     }
-
-    // isLabel
-    bool r;
-    string const * sp;
-
-    sp = new string("hola");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(r && "isLabel(hola)");
-        
-    sp = new string("h12o-la");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(r && "isLabel(h12o-la)");
-        
-    sp = new string("h12.o-la");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(h12.o-la)");
-        
-    sp = new string("2h12o-la");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(2h12o-la)");
-        
-    sp = new string("-h12o-la");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(-12o-la)");
-        
-    sp = new string("h12o-la-");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(h12o-la-)");
-        
-    sp = new string("h12o-la3");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(r && "isLabel(h12o-la3)");
-
-    sp = new string(" ");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(\" \")");
-
-    sp = new string("");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(\"\")");
-
-    sp = new string("a23456789012345678901234567890123456789012345678901234567890123");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(r && "isLabel(63 octetos)");
-
-    sp = new string("1234567890123456789012345678901234567890123456789012345678901234");
-    r = util::isLabel(*sp);
-    delete sp;
-    assert(!r && "isLabel(64 octetos)");
-
-    sp = new string("it.uc3m.es.foo.bar");
-    r = util::isLabel(*sp, 11, 3);
-    delete sp;
-    assert(r && "isLabel(it.uc3m.es.foo.bar, 11, 3)");
-
-    // isDomainName
-    sp = new string("");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(\"\")");
-
-    sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(r && "isDomainName(255 octetos)");
-
-    sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a234567890123456");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(256 octetos)");
-
-    sp = new string(" ");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(r && "isDomainName(\" \")");
-
-    sp = new string("it");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(r && "isDomainName(it)");
-
-    sp = new string("it.uc3m");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(r && "isDomainName(it.uc3m)");
-
-    sp = new string("it.uc3m.es.foo.bar");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(r && "isDomainName(it.uc3m.es.foo.bar)");
-
-    sp = new string(".");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(.)");
-
-    sp = new string("it.uc3m.es.");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.uc3m.es.)");
-
-    sp = new string("it.uc3m..es");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.uc3m..es)");
-
-    sp = new string("it.uc3m.es..");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.uc3m.es..)");
-
-    sp = new string("it.uc3m...es");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.uc3m...es)");
-
-    sp = new string("it.uc3m.es...");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.uc3m.es...)");
-
-    sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
-
-    sp = new string("a234567890123456789012345678901234567890123456789012345678901234.uc3m.es");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(a234567890123456789012345678901234567890123456789012345678901234.uc3m.es)");
-
-    sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234");
-    r = util::isDomainName(*sp);
-    delete sp;
-    assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234)");
 }
 
 void
 type_test(void)
 {
-    // test operator ==
-    Type const & a = Type::A;
-    Type const & b = Type::A;
-    assert(a == b);
-    assert(a == Type::A);
+    { // test operator ==
+        Type const & a = Type::A;
+        Type const & b = Type::A;
+        Type const & c = Type::NS;
+
+        assert(a == a);
+        assert(a == b);
+        assert(a == Type::A);
+        assert((a == c) == false);
+        assert((c == a) == false);
+        assert((b == c) == false);
+        assert((c == b) == false);
+        
+        assert((a != a) == false);
+        assert((a != b) == false);
+        assert((a != Type::A) == false);
+        assert(a != c);
+        assert(c != a);
+        assert(b != c);
+        assert(c != b);
+    }
 
     // test for value() and name() of the static members
     assert(Type::A.value() == 1);
@@ -377,24 +410,45 @@ type_test(void)
         exit(EXIT_FAILURE);
     } catch (Type::ExNotFound) {}
 
-    // test the stream operator overload
-    ostringstream oss;
-    oss << Type::PTR ;
-    assert(oss.str() == "PTR");
+    { // test the stream operator overload
+        ostringstream oss;
+        oss << Type::PTR ;
+        assert(oss.str() == "PTR");
+    }
 }
 
 void
 klass_test(void)
 {
-    // operator ==
-    Klass const & a = Klass::IN;
-    assert(a == Klass::IN);
-    Klass const & b = a;
-    assert(a == b);
+    { // operator== and operator !=
+        Klass const & a = Klass::IN;
+        Klass const & b = a;
+        Klass const & c = Klass::CS;
+
+        assert(a == a);
+        assert(a == Klass::IN);
+        assert(c == Klass::CS);
+        assert(Klass::IN == a);
+        assert(a == b);
+        assert(b == b);
+        assert(!(a == c));
+        assert(!(c == Klass::IN));
+
+        assert(a != c);
+        assert(c != a);
+        assert(c != Klass::IN);
+        assert(Klass::IN != c);
+    }
 
     // test for value() and name() of the static members
     assert(Klass::IN.value() == 1);
     assert(Klass::IN.name() == "IN");
+    assert(Klass::CS.value() == 2);
+    assert(Klass::CS.name() == "CS");
+    assert(Klass::CH.value() == 3);
+    assert(Klass::CH.name() == "CH");
+    assert(Klass::HS.value() == 4);
+    assert(Klass::HS.name() == "HS");
 
     // test for fromName() and fromValue() search methods 
     try {
@@ -407,6 +461,42 @@ klass_test(void)
         assert(Klass::fromValue(1) == Klass::IN);
     } catch (Klass::ExNotFound) {
         cerr << "Klass::fromValue(1) threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromName("CS") == Klass::CS);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromName(\"CS\") threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromValue(2) == Klass::CS);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromValue(2) threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromName("CH") == Klass::CH);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromName(\"CH\") threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromValue(3) == Klass::CH);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromValue(3) threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromName("HS") == Klass::HS);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromName(\"HS\") threw an ExNotFoud" << endl; 
+        exit(EXIT_FAILURE);
+    }
+    try {
+        assert(Klass::fromValue(4) == Klass::HS);
+    } catch (Klass::ExNotFound) {
+        cerr << "Klass::fromValue(4) threw an ExNotFoud" << endl; 
         exit(EXIT_FAILURE);
     }
 
@@ -423,10 +513,28 @@ klass_test(void)
         exit(EXIT_FAILURE);
     } catch (Klass::ExNotFound) {}
 
-    // test the stream operator overload
-    ostringstream oss;
-    oss << Klass::IN ;
-    assert(oss.str() == "IN");
+    { // test the stream operator overload
+        {
+            ostringstream oss;
+            oss << Klass::IN ;
+            assert(oss.str() == "IN");
+        }
+        {
+            ostringstream oss;
+            oss << Klass::CS ;
+            assert(oss.str() == "CS");
+        }
+        {
+            ostringstream oss;
+            oss << Klass::CH ;
+            assert(oss.str() == "CH");
+        }
+        {
+            ostringstream oss;
+            oss << Klass::HS ;
+            assert(oss.str() == "HS");
+        }
+    }
 }
 
 void

@@ -1,5 +1,5 @@
 // This class represents a DNS resource record class, see
-// rfc 1035 for the details.
+// RFC1035 section 3.2.3. for the details.
 //
 // As class is a reserved word for C++, I will use klass
 // instead
@@ -48,7 +48,10 @@ namespace rr {
         static const std::map<std::string const, Klass const *>::value_type nameMapInitializer[];
 
     public:
-        static const Klass IN;
+        static const Klass IN; // the internet
+        static const Klass CS; // CSNET (obsolete)
+        static const Klass CH; // the CHAOS
+        static const Klass HS; // Hesiod
 
         unsigned short      value()  const;
         std::string const & name()   const;
@@ -57,6 +60,7 @@ namespace rr {
         static const Klass & fromValue(unsigned short     value) throw (ExNotFound);
         static const Klass & fromName(std::string const & name)  throw (ExNotFound);
         friend int operator==(Klass const & a, Klass const & b);
+        friend int operator!=(Klass const & a, Klass const & b);
 
     private:
         friend std::ostream & operator<<(std::ostream & s, Klass const & t);
