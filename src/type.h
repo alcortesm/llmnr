@@ -59,6 +59,7 @@ namespace rr {
         static const Type & fromValue(unsigned short     value) throw (ExNotFound);
         static const Type & fromName(std::string const & name)  throw (ExNotFound);
         friend int operator==(Type const & a, Type const & b);
+        friend int operator!=(Type const & a, Type const & b);
 
         private:
         friend std::ostream & operator<<(std::ostream & s, Type const & t);
