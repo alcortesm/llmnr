@@ -979,6 +979,78 @@ rdataMX_test(void)
         delete cp;
         delete dp;
     }
+    
+    { //marshalling
+        RdataMX const * beforep;
+        string s("23 ns.it.uc3m.es");
+        try {
+            beforep = RdataMX::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * buf = (char *) calloc(100, sizeof(char));
+        if (buf == 0) {
+            cerr << "error in test: calloc failed" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * offset = buf;
+        beforep->marshall(offset);
+        char mx[17] = {'\x00', '\x00', '\x02', 'n', 's', '\x02', 'i', 't', '\x04', 'u', 'c', '3', 'm', '\x02', 'e', 's', '\x00'};
+        uint16_t npref = htons(23);
+        memcpy(mx, &npref, 2);
+        assert(memcmp(buf, &mx, sizeof(mx)) == 0);
+        assert(offset-buf == sizeof(mx));
+
+        //unmarshalling
+        char const * coffset = buf;
+        RdataMX const * afterp;
+        try {
+            afterp = RdataMX::unmarshall(coffset);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(*afterp == *beforep);
+        assert((coffset-buf) == sizeof(mx));
+        free(buf);
+
+        delete afterp;
+        delete beforep;
+    }
+    
+    { // more marshalling, big name
+        RdataMX const * beforep;
+        string s("36 a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+        try {
+            beforep = RdataMX::parse(s);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * buf = (char *) calloc(300, sizeof(char));
+        if (buf == 0) {
+            cerr << "error in test: calloc failed" << endl;
+            exit(EXIT_FAILURE);
+        }
+        char * offset = buf;
+        beforep->marshall(offset);
+
+        //unmarshalling
+        char const * coffset = buf;
+        RdataMX const * afterp;
+        try {
+            afterp = RdataMX::unmarshall(coffset);
+        } catch (Rdata::ExBadSyntax) {
+            cerr << "RdataMX::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax" << endl;
+            exit(EXIT_FAILURE);
+        }
+        assert(*afterp == *beforep);
+        free(buf);
+
+        delete afterp;
+        delete beforep;
+    }
 }
 
 void

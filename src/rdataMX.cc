@@ -1,6 +1,8 @@
 #include "util.h"
 #include "rdataMX.h"
 
+#include <arpa/inet.h>
+
 using std::string;
 using rr::RdataMX;
 using rr::Rdata;
@@ -105,26 +107,29 @@ RdataMX::printOn(std::ostream & s) const
 void
 RdataMX::marshall(char * & offset) const
 {
-    if (this->length() == 0)
-        return;
-
-    char * last = offset + this->length() - 1;
-    for (; offset<=last; offset++)
-        *offset = 'a';
-
+    uint16_t npreference = htons(d_preference);
+    memcpy(offset, &npreference, PREFERENCE_LENGTH);
+    offset += PREFERENCE_LENGTH;
+    util::dnsname2buf(*d_exchangep, offset);
     return;
 }
 
 RdataMX const *
 RdataMX::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
 {
-    if (*offset != 'a')
+    uint16_t npreference;
+    memcpy(&npreference, offset, PREFERENCE_LENGTH);
+    unsigned short preference = (unsigned short) ntohs(npreference);
+    offset += PREFERENCE_LENGTH;
+
+    string * exchangep;
+    try {
+        exchangep = util::buf2dnsname(offset);
+    } catch (string & s) {
         throw Rdata::ExBadSyntax();
-
-    RdataMX const * dp = RdataMX::parse("127.0.0.1");
-
-    offset += 5;
-
+    }
+    RdataMX const * dp = new RdataMX(preference, *exchangep);
+    delete exchangep;
     return dp;
 }
 
