@@ -1258,6 +1258,12 @@ rdata_test(void)
     }
 }
 
+void
+rrlist_test(void)
+{
+    return;
+}
+
 int
 main(int argc, char ** argv) {
 
@@ -1269,6 +1275,7 @@ main(int argc, char ** argv) {
     rdataNS_test();
     rdata_test();
     rr_test();
+    rrlist_test();
 
     exit(EXIT_SUCCESS);
 }

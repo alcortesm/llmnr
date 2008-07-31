@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-Wall -g
 LDFLAGS=-Wall -g
-SRCS=klass.cc type.cc rr.cc args.cc util.cc rdata.cc rdataA.cc rdataMX.cc rdataNS.cc
+SRCS=klass.cc type.cc rr.cc args.cc util.cc rdata.cc rdataA.cc rdataMX.cc rdataNS.cc rrlist.cc
 OBJS=$(SRCS:.cc=.o)
 BIN=llmnr
 TEST=test
