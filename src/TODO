@@ -10,5 +10,4 @@ rdataCNAME, rdataSOA, rdataPTR
 
 
 
-change marshall/unmarshall of rdataNS to use dnsname2buf and buf2dnsname
 make marshall/unmarshall for rdataMX
