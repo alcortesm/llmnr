@@ -5,10 +5,21 @@
 
 namespace util {
     
+    /*
+     * decimal number to int and viceversa
+     */
     signed long    const MAX_SLONG  = ((1<<31) - 1);      //  2147483647
     signed long    const MIN_SLONG  = ((-1) * MAX_SLONG); // -2147483647
     unsigned short const MAX_USHORT = ((1<<16) - 1);      //  65535
     unsigned short const MIN_USHORT = 0;                  //  0
+
+    signed long    str2sint32(std::string const & s) throw (std::string);
+    unsigned short str2uint16(std::string const & s) throw (std::string);
+
+
+    /*
+     * DNS definitions and tests
+     */
 
     // see RFC1035 section 2.3.4.
     unsigned short const MIN_DNAME_SIZE = 1;
@@ -26,10 +37,14 @@ namespace util {
     std::string const SPACE    = " ";
     std::string const SPACETAB = " \t";
 
-    signed long    str2sint32(std::string const & s) throw (std::string);
-    unsigned short str2uint16(std::string const & s) throw (std::string);
     bool           isDomainName(std::string const & s);
     bool           isLabel(std::string const & s, size_t head, size_t size);
     bool           isLabel(std::string const & s);
+
+    /*
+     * DNS names buffer representation
+     */
+    void dnsname2buf(std::string const & s, char * & offset); // increments offset to the next field
+    std::string * buf2dnsname(char const * & offset) throw (std::string); // increments offset to the next field
 }
 #endif

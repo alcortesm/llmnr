@@ -282,6 +282,72 @@ util_test(void)
         delete sp;
         assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234)");
     }
+
+    { // dnsname2buf and buf2dnsname
+        {
+            string const s = "it.uc3m.es";
+            size_t const buf_sz = 12;
+            char const buf[buf_sz] = {'\x02', 'i', 't', '\x04', 'u', 'c', '3', 'm', '\x02', 'e', 's', '\x00'};
+
+            char tmp[100];
+            char * offset = tmp;
+            util::dnsname2buf(s, offset);
+            assert(memcmp(buf, tmp, buf_sz) == 0);
+            assert(offset-tmp == (ssize_t) buf_sz);
+
+            string * sp;
+            char const * oo = tmp;
+            try {
+                sp = util::buf2dnsname(oo);
+            } catch (string & ex) {
+                cerr << "util::buf2dnsname throws exception: " << ex << endl;
+                exit(EXIT_FAILURE);
+            }
+            assert(s.compare(*sp) == 0);
+            assert(oo-tmp == (ssize_t) buf_sz);
+            delete sp;
+        }
+        {
+            string const s("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+            char tmp[500];
+            char * offset = tmp;
+            util::dnsname2buf(s, offset);
+
+            string const aux(tmp);
+            assert(offset-tmp == (ssize_t) aux.size() + 1);
+
+            string * sp;
+            char const * oo = tmp;
+            try {
+                sp = util::buf2dnsname(oo);
+            } catch (string & ex) {
+                cerr << "util::buf2dnsname throws exception: " << ex << endl;
+                exit(EXIT_FAILURE);
+            }
+            assert(s.compare(*sp) == 0);
+            assert(oo-tmp == (ssize_t) aux.size() + 1);
+            delete sp;
+        }
+        {
+            string const s("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a234567890123456");
+            char tmp[500];
+            char * offset = tmp;
+            util::dnsname2buf(s, offset); // s is a bad formed dns name (too long) but we write it anyway
+
+            string const aux(tmp);
+            assert(offset-tmp == (ssize_t) aux.size() + 1);
+
+            string * sp;
+            char const * oo = tmp;
+            try {
+                sp = util::buf2dnsname(oo);
+                cerr << "util::buf2dnsname didn't throw a 'too long data' exception" << endl;
+                exit(EXIT_FAILURE);
+            } catch (string & ex) {
+                // OK
+            }
+        }
+    }
 }
 
 void
