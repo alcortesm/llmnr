@@ -33,6 +33,8 @@ RdataMX::~RdataMX()
     delete this->d_exchangep;
 }
 
+// TODO: this does not works with "32 \t  mx.google.com"
+// and adding \t to "space" did not worked, solve it properly
 RdataMX const *
 RdataMX::parse(string const & s) throw (Rdata::ExBadSyntax)
 {

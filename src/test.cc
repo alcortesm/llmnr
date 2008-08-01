@@ -784,7 +784,7 @@ rr_test(void)
         assert(rrp->name()     == "www.l.google.com.");
         assert(rrp->klass()    == Klass::IN);
         assert(rrp->type()     == Type::NS);
-        assert(rrp->ttl()      == 200);
+        assert(rrp->ttl()      == 20);
         assert(rrp->rdata()    == *dp);
         delete dp;
         
@@ -795,7 +795,7 @@ rr_test(void)
         string const * sp;
         Rr     const * rrp;
 
-        sp = new string(" 	www.l.google.com.   200 IN  A  45 mx01.google.com  	");
+        sp = new string(" 	www.l.google.com.   200 IN  MX  45 mx01.google.com  	");
         try {
             rrp = Rr::parse(*sp);
         } catch (Rr::ExNoContent) {
@@ -955,7 +955,7 @@ rr_test(void)
         string const * sp;
         Rr     const * rrp;
 
-        sp = new string(" 	www.l.google.com.   200 IN  MX   243    mx.google.com  	");
+        sp = new string(" 	www.l.google.com.   200 IN  MX   243 mx.google.com  	");
         try {
             rrp = Rr::parse(*sp);
         } catch (Rr::ExNoContent) {
