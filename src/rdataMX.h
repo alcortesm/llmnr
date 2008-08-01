@@ -26,6 +26,7 @@ namespace rr {
         rr::Klass const & klass()      const;
         friend bool rr::operator==(rr::RdataMX const & a, rr::RdataMX const & b);
         friend bool rr::operator!=(rr::RdataMX const & a, rr::RdataMX const & b);
+        bool equals(rr::Rdata const & o) const;
         
         void marshall(char * & offset) const; // offset is advanced
         static RdataMX const * unmarshall(char const * & offset) // offset is advanced

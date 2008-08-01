@@ -20,6 +20,7 @@ namespace rr {
         rr::Klass const & klass() const;
         friend bool rr::operator==(rr::RdataA const & a, rr::RdataA const & b);
         friend bool rr::operator!=(rr::RdataA const & a, rr::RdataA const & b);
+        bool equals(rr::Rdata const & o) const;
 
         void marshall(char * & offset) const; // offset is advanced
         static RdataA const * unmarshall(char const * & offset) // offset is advanced

@@ -2,6 +2,10 @@
 #include "rr.h"
 #include "type.h"
 #include "klass.h"
+#include "rdata.h"
+#include "rdataA.h"
+#include "rdataNS.h"
+#include "rdataMX.h"
 
 #include <iostream>
 
@@ -9,6 +13,10 @@ using std::string;
 using rr::Rr;
 using rr::Type;
 using rr::Klass;
+using rr::Rdata;
+using rr::RdataA;
+using rr::RdataNS;
+using rr::RdataMX;
 
 Rr const *
 Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
@@ -65,7 +73,7 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     string type_str  = s.substr(type_head,  type_size);
     string klass_str = s.substr(klass_head, klass_size);
     string ttl_str   = s.substr(ttl_head,   ttl_size);
-    string rdata_str = s.substr(rdata_head, rdata_size);
+    string const rdata_str = s.substr(rdata_head, rdata_size);
 
     Type const & type = Type::fromName(type_str);
     Klass const & klass = Klass::fromName(klass_str);
@@ -75,8 +83,15 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     } catch (string & s) {
         throw Rr::ExBadSyntax();
     }
-    
-    rrp = new Rr(name_str, type, klass, ttl, rdata_str);
+
+    Rdata const * rdatap;
+    try {
+        rdatap = Rdata::parse(klass, type, rdata_str);
+    } catch (Rdata::ExBadSyntax & ex) {
+        throw Rr::ExBadSyntax();
+    }
+
+    rrp = new Rr(name_str, type, klass, ttl, rdatap);
     return rrp;
 }
 
@@ -100,23 +115,28 @@ Rr::ttl() const {
     return d_ttl;
 }
 
-std::string const &
+Rdata const &
 Rr::rdata() const {
-    return d_rdata;
+    return *d_rdatap;
 }
 
 Rr::Rr(std::string const & name,
             Type const & type,
             Klass const & klass,
             signed long int ttl,
-            std::string const & rdata)
+            Rdata const * const rdatap)
 :
     d_name(name),
     d_type(type),
     d_klass(klass),
     d_ttl(ttl),
-    d_rdata(rdata)
+    d_rdatap(rdatap)
 {};
+
+Rr::~Rr()
+{
+    delete d_rdatap;
+}
 
 std::ostream &
 rr::operator<< (std::ostream & s, Rr const & rr)
@@ -127,4 +147,26 @@ rr::operator<< (std::ostream & s, Rr const & rr)
     s << rr.type()  << "\t";
     s << rr.rdata();
     return s;
+}
+
+bool
+rr::operator==(Rr const & a, Rr const & b)
+{
+    if (a.name().compare(b.name()) != 0)
+        return false;
+    if (a.type() != b.type())
+        return false;
+    if (a.klass() != b.klass())
+        return false;
+    if (a.ttl() != b.ttl())
+        return false;
+    if (a.rdata() != b.rdata())
+        return false;
+    return true;
+}
+
+bool
+rr::operator!=(Rr const & a, Rr const & b)
+{
+    return ! (a == b);
 }

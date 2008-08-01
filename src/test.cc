@@ -722,7 +722,7 @@ rr_test(void)
         delete sp;
     }
 
-    { // valid rr
+    { // valid rr A
         string const * sp;
         Rr     const * rrp;
 
@@ -736,14 +736,198 @@ rr_test(void)
             cerr << "Rr::parse() of a string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched ExBadSyntax" << endl ;
             exit(EXIT_FAILURE);
         }
+        RdataA const * dp = RdataA::parse("64.233.183.99");
         assert(rrp->name()     == "www.l.google.com.");
         assert(&(rrp->klass()) == &(rr::Klass::IN));
+        assert(rrp->klass()    == Klass::IN);
         assert(&(rrp->type())  == &(rr::Type::A));
+        assert(rrp->type()     == Type::A);
         assert(rrp->ttl()      == 200);
-        assert(rrp->rdata()    == "64.233.183.99");
+        assert(rrp->rdata()    == *dp);
+        delete dp;
         
         delete sp;
         delete rrp;
+    }
+    { // invalid rr NS
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   200 IN  NS   64.233.183.99  	");
+        try {
+            rrp = Rr::parse(*sp);
+            cerr << "Rr::parse(" << *sp << ") did not throw an exception!" << endl;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of invalid string \"   www.l.google.com.   200 IN  A   64.233.183.99   \" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            // OK
+        }
+        delete sp;
+    }
+    { // valid rr NS
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   20 IN  NS   ns.google.com  	");
+        try {
+            rrp = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        RdataNS const * dp = RdataNS::parse("ns.google.com");
+        assert(rrp->name()     == "www.l.google.com.");
+        assert(rrp->klass()    == Klass::IN);
+        assert(rrp->type()     == Type::NS);
+        assert(rrp->ttl()      == 200);
+        assert(rrp->rdata()    == *dp);
+        delete dp;
+        
+        delete sp;
+        delete rrp;
+    }
+    { // valid rr MX
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   200 IN  A  45 mx01.google.com  	");
+        try {
+            rrp = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        RdataMX const * dp = RdataMX::parse("45 mx01.google.com");
+        assert(rrp->name()     == "www.l.google.com.");
+        assert(rrp->klass()    == Klass::IN);
+        assert(rrp->type()     == Type::MX);
+        assert(rrp->ttl()      == 200);
+        assert(rrp->rdata()    == *dp);
+        delete dp;
+        
+        delete sp;
+        delete rrp;
+    }
+
+    { // comparison
+        Rr const * r1p;
+        Rr const * r2p; // = r1
+        Rr const * r3p; // the rest are different
+        Rr const * r4p;
+        Rr const * r5p;
+        string const * sp;
+
+        sp = new string(" 	www.l.google.com.   20 IN  NS   ns.google.com  	");
+        try {
+            r1p = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+        sp = new string(" 	www.l.google.com.   20 IN  NS   ns.google.com  	");
+        try {
+            r2p = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+        sp = new string(" 	www.l.google.com.   22 IN  NS   ns.google.com  	");
+        try {
+            r3p = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+        sp = new string(" 	www.l.google.com.   20 IN  MX   32 mx.google.com  	");
+        try {
+            r4p = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+        sp = new string(" 	www.l.google.com.   20 IN  A   32.32.32.32  	");
+        try {
+            r5p = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        delete sp;
+
+        assert(*r1p == *r1p);
+        assert(*r1p == *r2p);
+        assert(*r2p == *r1p);
+        assert(*r1p != *r3p);
+        assert(*r1p != *r4p);
+        assert(*r1p != *r5p);
+        assert(*r3p != *r1p);
+        assert(*r4p != *r1p);
+        assert(*r5p != *r1p);
+        
+        assert(*r2p == *r2p);
+        assert(*r2p != *r3p);
+        assert(*r2p != *r4p);
+        assert(*r2p != *r5p);
+        assert(*r3p != *r2p);
+        assert(*r4p != *r2p);
+        assert(*r5p != *r2p);
+        
+        assert(*r3p == *r3p);
+        assert(*r3p != *r2p);
+        assert(*r3p != *r4p);
+        assert(*r3p != *r5p);
+        assert(*r2p != *r3p);
+        assert(*r4p != *r3p);
+        assert(*r5p != *r3p);
+        
+        assert(*r4p == *r4p);
+        assert(*r4p != *r3p);
+        assert(*r4p != *r2p);
+        assert(*r4p != *r5p);
+        assert(*r3p != *r4p);
+        assert(*r2p != *r4p);
+        assert(*r5p != *r4p);
+        
+        assert(*r5p == *r5p);
+        assert(*r5p != *r3p);
+        assert(*r5p != *r4p);
+        assert(*r5p != *r2p);
+        assert(*r3p != *r5p);
+        assert(*r4p != *r5p);
+        assert(*r2p != *r5p);
+
+        delete r1p;
+        delete r2p;
+        delete r3p;
+        delete r4p;
+        delete r5p;
     }
 
     { // test the stream operator overload
@@ -763,6 +947,27 @@ rr_test(void)
         ostringstream oss;
         oss << *rrp;
         assert(oss.str() == "www.l.google.com.\t200\tIN\tA\t64.233.183.99");
+        
+        delete sp;
+        delete rrp;
+    }
+    { // test the stream operator overload
+        string const * sp;
+        Rr     const * rrp;
+
+        sp = new string(" 	www.l.google.com.   200 IN  MX   243    mx.google.com  	");
+        try {
+            rrp = Rr::parse(*sp);
+        } catch (Rr::ExNoContent) {
+            cerr << "Rr::parse() of valid string \"" << *sp << "\" launched an ExNoContent" << endl ;
+            exit(EXIT_FAILURE);
+        } catch (Rr::ExBadSyntax) {
+            cerr << "Rr::parse() of a string \"" << *sp << "\" launched ExBadSyntax" << endl ;
+            exit(EXIT_FAILURE);
+        }
+        ostringstream oss;
+        oss << *rrp;
+        assert(oss.str() == "www.l.google.com.\t200\tIN\tMX\t243 mx.google.com");
         
         delete sp;
         delete rrp;

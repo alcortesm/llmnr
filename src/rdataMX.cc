@@ -149,4 +149,13 @@ rr::operator!=(rr::RdataMX const & a, rr::RdataMX const & b)
     return ! (a == b);
 }
 
-
+bool
+RdataMX::equals(rr::Rdata const & o) const
+{
+    if (this->klass() != o.klass())
+        return false;
+    if (this->type() != o.type())
+        return false;
+    RdataMX const * dp = (rr::RdataMX const *) &o;
+    return (*this == *dp);
+}

@@ -100,4 +100,13 @@ rr::operator!=(rr::RdataNS const & a, rr::RdataNS const & b)
     return ! (a == b);
 }
 
-
+bool
+RdataNS::equals(rr::Rdata const & o) const
+{
+    if (this->klass() != o.klass())
+        return false;
+    if (this->type() != o.type())
+        return false;
+    RdataNS const * dp = (RdataNS const *) &o;
+    return (*this == *dp);
+}

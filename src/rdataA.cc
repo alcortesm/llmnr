@@ -95,3 +95,13 @@ rr::operator!=(rr::RdataA const & a, rr::RdataA const & b)
     return ! (a == b);
 }
 
+bool
+RdataA::equals(rr::Rdata const & o) const
+{
+    if (o.klass() != this->klass())
+        return false;
+    if (o.type() != this->type())
+        return false;
+    RdataA const * dp = (rr::RdataA const *) &o;
+    return (*this == *dp);
+}
