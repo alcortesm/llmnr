@@ -18,21 +18,21 @@ namespace rr {
     public:
         class ExBadSyntax {
         private:
-            unsigned int d_line;
+            unsigned int const d_line;
         public:
             ExBadSyntax(unsigned int line);
-            unsigned int line();
+            unsigned int const line();
         };
         class ExBadIndex {};
         class ExCanNotReadFile {
         private:
-            std::string d_diag;
+            std::string const d_diag;
         public:
-            ExCanNotReadFile(std::string & diag);
-            std::string & diag();
+            ExCanNotReadFile(std::string const & diag);
+            std::string const & diag();
         };
 
-        RrDb(std::string & path) throw (ExBadSyntax, ExCanNotReadFile);
+        RrDb(std::string const & path) throw (ExBadSyntax, ExCanNotReadFile);
         ~RrDb();
         bool isEmpty();
         bool isTentative(unsigned int index) throw (ExBadIndex);

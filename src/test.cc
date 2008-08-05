@@ -4,6 +4,7 @@
 #include "rdataA.h"
 #include "rdataMX.h"
 #include "rdataNS.h"
+#include "rrdb.h"
 
 #include <cassert>
 #include <sstream>
@@ -24,6 +25,7 @@ using rr::RdataA;
 using rr::RdataMX;
 using rr::RdataNS;
 using rr::Rdata;
+using rr::RrDb;
 
 void
 util_test(void)
@@ -1454,8 +1456,8 @@ rdata_test(void)
             exit(EXIT_FAILURE);
         }
         assert(datap->length() == sns.length());
-        //assert(datap->type()  == Type::NS);
-        //assert(datap->klass() == Klass::IN);
+        assert(datap->type()  == Type::NS);
+        assert(datap->klass() == Klass::IN);
         ostringstream ossns;
         ossns << *datap;
         assert(ossns.str().compare(sns) == 0);
@@ -1464,8 +1466,20 @@ rdata_test(void)
 }
 
 void
-rrlist_test(void)
-{
+rrdb_test(void)
+{   
+    { // good file
+        string file = "test.cc";
+        try {
+            RrDb db(file);
+        } catch (RrDb::ExBadSyntax & e) {
+            cerr << "RrDb(" << file << ") throw ExBadSyntax on line " << e.line() << endl ; 
+            exit(EXIT_FAILURE);
+        } catch (RrDb::ExCanNotReadFile & e) {
+            cerr << "RrDb(" << file << ") throw ExCanNotReadFile because: " << e.diag() << endl ;
+            exit(EXIT_FAILURE);
+        }
+    }
     return;
 }
 
@@ -1480,7 +1494,7 @@ main(int argc, char ** argv) {
     rdataNS_test();
     rdata_test();
     rr_test();
-    rrlist_test();
+    rrdb_test();
 
     exit(EXIT_SUCCESS);
 }
