@@ -1,3 +1,3 @@
-Run make to compile.
+Run make to compile and install the 'llmnr' binary under ~/bin/
 
-Uses libstdc++ and libc for the getopt (from POSIX).
+Uses libstdc++6. It also uses libc6 for getopt (from POSIX).
