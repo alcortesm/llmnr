@@ -1,0 +1,763 @@
+<!DOCTYPE HTML PUBliC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+
+
+<html lang="en">
+
+<head>
+    <title>Computer Networks II lab FAQ</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+    <meta name="author" content="Alberto Cort&eacute;s Mart&iacute;s">
+    <meta name="keywords" content="computer networks lab faq it uc3m">
+
+    <meta name="description" content="Computer Networks II lab FAQ">
+    <meta name="editor" content="vim">
+    <style type="text/css">
+      body {
+        padding: 0 2em 0 2em;
+        margin: 0px;
+        color: #000000;
+        background-color: #FFFFFF;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 10pt;
+        font-weight: normal
+      }
+      td {
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 10pt;
+        font-weight: normal
+      }
+      a:link {
+        color: #0000CC;
+        background-color: #FFFFFF;
+      }
+      a:visited {
+        color: #005555;
+        background-color: #FFFFFF;
+      }
+      h1 {
+        font-size: 16pt;
+        font-weight: bold;
+        color: #000033;
+        background-color: #f2f2f2;
+      }
+      h2 {
+        font-size: 12pt;
+        font-weight: bold;
+        color: #000000;
+        background-color: #FFFFFF;
+      }
+      div.code {
+        width: 90% ;
+        padding-left: 1ex ;
+        padding-right: 1ex ;
+        padding-top: 0em ;
+        padding-bottom: 0em ;
+        margin-left: 2ex ;
+        margin-top: 0em ;
+        margin-bottom: 0em ;
+        font-size: 9pt ;
+        font-weight: normal ;
+        font-family: monospace ;
+        color: #000000 ;
+        background-color: #EEE ;
+        border: 1px solid #000099 ;
+      }
+      div.cite {
+        width: 90% ;
+        padding-left: 1ex ;
+        padding-right: 1ex ;
+        padding-top: 0em ;
+        padding-bottom: 0em ;
+        margin-left: 2ex ;
+        margin-top: 0em ;
+        margin-bottom: 0em ;
+        font-size: 9pt ;
+        font-weight: normal ;
+        color: #000000 ;
+        background-color: #FFFFFF ;
+        border: 1px solid #000000 ;
+      }
+      div.samp {
+        width: 90% ;
+        padding-left: 1ex ;
+        padding-right: 1ex ;
+        padding-top: 0em ;
+        padding-bottom: 0em ;
+        margin-left: 2ex ;
+        margin-top: 0em ;
+        margin-bottom: 0em ;
+        font-size: 9pt ;
+        font-weight: normal ;
+        font-family: monospace ;
+        color: #00CC00 ;
+        background-color: #000000 ;
+        border: 1px solid #009900 ;
+      }
+    </style>
+<!--    <base href="http://bach.gast.it.uc3m.es/~alcortes/curro/"> -->
+</head>
+
+<body>
+
+  <h1>
+  <a name="contents">0. Contents</a>
+  </h1>
+
+  <ul>
+  <li>
+  <a href="#contents">0. Contents</a>
+  </li>
+  <li> <a href="#assigment">1. About the practical assigment</a>
+    <ul>
+    <li>
+    <a href="#samedomain">Can two or more responders in the same network
+  serve RRs for the same domain name?</a>
+    </li>
+    <li>
+    <a href="#veri">When it is necessary to do the uniqueness verification?</a>
+    </li>
+    <li>
+    <a href="#veri2">How does the uniqueness verification work in LLMNR?</a>
+    </li>
+    <li>
+    <a href="#C">When is a query with the C bit set sent?</a>
+    </li>
+    <li>
+    <a href="#several">Why can several responses to a query arrive?</a>
+    </li>
+    </ul>
+  </li>
+	<li> <a href="#C">2. About C, sockets, system calls...</a>
+		<ul>
+    <li>
+    <a href="#multicast">How do I use multicast UDP sockets?</a>
+    </li>
+    <li>
+    <a href="#timers">How do I use timers?</a>
+    </li>
+    <li>
+    <a href="#cargs">Is there any library to help me parse command arguments?</a>
+    </li>
+    <li>
+    <a href="#man0">Some manpages are missing or show manpages from other commands.</a>
+    </li>
+		<li>
+		<a href="#man1">How do I get <tt>man(1)</tt> to find a new manpage</a>
+		</li>
+    <li>
+    <a href="#perror"><tt>Perror(3)</tt> returns an error even when the call to the previous function was successful!</a>
+    </li>
+    <li>
+    <a href="#reuse">How can I reuse ports?</a>
+    </li>
+    <li>
+    <a href="#lint">How do I insert a long integer in network byte order in a 3 byte buffer?</a>
+    </li>
+    <li>
+    <a href="#casting">Is the casting of a struct to void* a good idea for sending data on a socket?</a>
+    </li>
+    <li>
+    <a href="#goodcode">I don't know how to comment the code. I want to improve my programming skills.</a>
+    </li>
+    <li>
+    <a href="#sig">Asynchronous signals &amp; pthreads, or how to mix oil &amp; water.</a>
+    </li>
+		<li>
+		<a href="#htons">How to use htons()</tt>, htonl()</tt>, ntohs()</tt>, ntohl()</tt>?</a>
+		</li>
+		<li>
+		<a href="#endian">How to check Endian type at run time?</a>
+		</li>
+    </ul>
+	</li>
+  <li> <a href="#faq">3. About this FAQ</a>
+    <ul>
+    <li>
+    <a href="#this">What is this FAQ?</a>
+    </li>
+    <li>
+    <a href="#en">Why is this FAQ in english?</a>
+    </li>
+    <li>
+    <a href="#bad">Why is this FAQ so badly written?</a>
+    </li>
+    <li>
+    <a href="#mantainer">Who mantains this FAQ?</a>
+    </li>
+    <li>
+    <a href="#nothere">What if I don't find my question here?, What if I don't like the answer?</a>
+    </li>
+    <li>
+    <a href="#change">Will this FAQ change a lot?, Should I keep an eye on it weekly?</a>
+    </li>
+    <li>
+    <a href="#clueless">What does things like "printf(3)" means?</a>
+    </li>
+    </ul>
+  </li>
+  </ul>
+
+  <h1>
+  <a name="assigment">1. About the practical assigment</a>
+  </h1>
+
+  <h2>
+  <a name="samedomain">Can two or more responders in the same network
+  serve RRs for the same domain name?</a>
+  </h2>
+
+  <p>
+  Not in this practical assignment. In section 4 of the RFC, it
+  indicates that by default a responder must be configured so that its
+  name will be unique in each interface. This means that in our network
+  no other responder can serve RRs, of any type, for the same domain
+  name.
+  </p>
+
+  <p>
+  For example, if one responder has configured a RR for the domain
+  "mydomain.com" then no other responder can serve any RR of any type
+  for "mydomain.com". However other responders can serve RR for
+  subdomains, e.g. "one.mydomain.com", "two.mydomain.com", etc.
+  </p>
+
+  <h2>
+  <a name="veri">When it is necessary to do the uniqueness verification?
+  </a>
+  </h2>
+
+  <p>
+  When a responder starts and when it receives a query with the C bit set.
+  </p>
+
+  <!--
+  <p>
+  In order to fulfil the minimum requirements for the assignment it is
+  necessary only to implement the first of the cases.
+  </p>
+  -->
+
+  <h2>
+  <a name="veri2">How does the uniqueness verification work in LLMNR?</a>
+  </h2>
+
+  <p>
+  As stated in section 4.1 of the RFC, the responder must send a query for
+  each domain name that it wants to serve (with both C and T bits clear). It
+  is recommended to use an ANY type query (although a query for each of the
+  supported types could be issued).
+  </p>
+
+  <p>
+  If a response is received with the T bit clear, the responder must
+  give up serving this domain name (since other machine is already
+  serving it). If a response is received with the T bit set, then if the
+  source IP address of the response is less than the IP address of the
+  responder that is verifying its uniqueness, it must give up serving
+  this domain name, otherwise the responder can serve this domain name.
+  If not response is received, the responder must retry the query as
+  stated in section 2.7.
+  </p>
+
+  <p>
+  While the uniqueness verification is not finished, a responder must
+  always reply the queries about its RRs with the T bit set.
+  </p>
+
+  <h2>
+  <a name="C">When is a query with the C bit set sent?</a>
+  </h2>
+
+  <p>
+  As stated in section 4.2, when a sender receives several responses
+  with the C bit clear to the same query from different hosts, it must
+  retransmit the same query with the C bit set and including the RRs
+  received in the previous responses in the additional section of the
+  LLMNR query.
+  </p>
+
+  <p>
+  A responder must send a query with the C bit set if it has multiple
+  interfaces. This case will not be tested in the exam.
+  </p>
+
+  <h2>
+  <a name="several">Why can several responses to a query arrive?</a>
+  </h2>
+
+  <p>
+  Two responders could have verified the uniqueness of theirs RRs for
+  the same domain name in theirs respective networks but after that,
+  these networks could join and then the RRs could become not unique.
+  </p>
+
+
+  <h1>
+  <a name="C">2. About C, sockets, system calls...</a>
+  </h1>
+
+  <h2>
+  <a name="multicast">How do I use multicast UDP sockets?</a>
+  </h2>
+  <p>
+  There is a <tt>setsockopt(2)</tt> option for managing multicast sockets. Here is an example:
+  </p>
+  <div class=code><pre>
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;time.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+
+#define PORT 5355
+#define GROUP "224.0.0.252"
+#define MSGBUFSIZE 256
+
+main(int argc, char *argv[]) {
+
+  struct sockaddr_in addr;
+  int fd, nbytes,addrlen;
+  struct ip_mreq mreq;
+  char msgbuf[MSGBUFSIZE];
+
+  // Crea un socket UDP
+  if ((fd=socket(AF_INET,SOCK_DGRAM,0)) &lt; 0) {
+    perror("socket");
+    exit(1);
+  }
+
+  // Establece direccion servidor
+  memset(&amp;addr,0,sizeof(addr));
+  addr.sin_family=AF_INET;
+  addr.sin_addr.s_addr=htonl(INADDR_ANY);
+  addr.sin_port=htons(PORT);
+     
+  // Bind a la direccion de recepcion
+  if (bind(fd,(struct sockaddr *) &amp;addr,sizeof(addr)) &lt; 0) {
+    perror("bind");
+    exit(1);
+  }
+     
+  // Utiliza setsockopt para unirse al grupo multicast (man IP)
+  mreq.imr_multiaddr.s_addr=inet_addr(GROUP);
+  mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+  
+  if (setsockopt(fd,IPPROTO_IP,IP_ADD_MEMBERSHIP,&amp;mreq,sizeof(mreq)) &lt; 0) {
+    perror("setsockopt");
+    exit(1);
+  }
+
+  // Recibe mensajes enviados al grupo  multicast
+  while (1) {
+    addrlen=sizeof(addr);
+    if ((nbytes=recvfrom(fd,msgbuf,MSGBUFSIZE,0,
+          (struct sockaddr *) &amp;addr,&amp;addrlen)) &lt; 0) {
+      perror("recvfrom");
+      exit(1);
+    }
+    puts(msgbuf);
+  }
+
+}</pre></div>
+<p> </p>
+  <div class=code><pre>
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;time.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+
+#define PORT 5355
+#define GROUP "224.0.0.252"
+
+main(int argc, char *argv[]) {
+  struct sockaddr_in addr;
+  int fd, cnt;
+  struct ip_mreq mreq;
+  char *message="Hola!";
+
+  // Crea un socket UDP
+  if ((fd=socket(AF_INET,SOCK_DGRAM,0)) &lt; 0) {
+    perror("socket");
+    exit(1);
+  }
+
+  // Direccion destino
+  memset(&amp;addr,0,sizeof(addr));
+  addr.sin_family=AF_INET;
+  addr.sin_addr.s_addr=inet_addr(GROUP);
+  addr.sin_port=htons(PORT);
+
+  // Envia mensaje
+
+  if (sendto(fd,message,sizeof(message),0,
+          (struct sockaddr *) &amp;addr, sizeof(addr)) &lt; 0) {
+    perror("sendto");
+    exit(1);
+  }
+
+}</pre></div>
+
+    <h2>
+    <a name="timers">How do I use timers?</a>
+    </h2>
+    <p>
+    <tt>Select(2)</tt> is easy, give it a try.
+    </p>
+
+    <h2>
+    <a name="cargs">Is there any library to help me parse command arguments?</a>
+    </h2>
+    <p>
+    Yes, see <tt>getopt(3)</tt>.
+    </p>
+
+    <h2>
+    <a name="man0">Some manpages are missing or show manpages from other commands.</a>
+    </h2>
+    <p>
+    Unlikely. Read <tt>man(1)</tt> before complaining to the lab technicians. The <tt>-k</tt> option is very useful:
+    </p>
+    <div class=samp><pre>$ man -k perror
+assert_perror (3)    - test errnum and abort
+clnt_perror (3)      - library routines for remote procedure calls
+clnt_sperror (3)     - library routines for remote procedure calls
+perror (3)           - print a system error message
+perror (3posix)      - write error messages to standard error</pre></div>
+
+  <h2>
+	<a name="man1">How do I get <tt>man(1)</tt> to find a new manpage</a>
+  </h2>
+
+	<p>
+	The following is only a summary, you can read the full story
+	<a href="http://babbage.cs.qc.edu/courses/cs701/Handouts/man_pages.html">here</a>
+	and <a href="http://www.linuxfocus.org/English/November2003/article309.shtml">here</a>.
+	</p>
+	
+  <p>
+	The <tt>man(1)</tt> command searches a set of directories listed in the MANPATH environment
+	variable for subdirectories of the form "manX," where X is a manual section number.
+	Thus, all the man pages for commands are in directories named man1, all the man pages
+	for system calls are in directories named man2, etc.
+	</p>
+	
+	<p>
+	The man pages themselves have names of the form "name.X" where name is the name of
+	the command, system call, or whatever, and "X" is usually the manual section number.
+	Thus, if the directory <tt>/usr/man</tt> is listed in the MANPATH environment variable, the man
+	page for the ls command might be <tt>/usr/man/man1/ls.1</tt>
+	</p>
+
+	<p>
+	You can create a <tt>~/man</tt> directory for all your manpages, and if you use <tt>bash(1)</tt>,
+	insert something like this	on your <tt>.bash_profile</tt>:
+  </p>
+
+	<div class=code><pre>
+[ -d "${HOME}/man" ] && export MANPATH=${MANPATTH}:${HOME}/man
+	</pre></div>
+
+	<p>
+	This is an example of how to use it:
+	</p>
+
+	<div class=samp><pre>
+; cd
+; find man
+man
+man/man1
+man/man1/newmanpage.1
+; man newmanpage
+Reformatting newmanpage(1), please wait...
+	</pre></div>
+
+    <h2>
+    <a name="perror"><tt>Perror(3)</tt> returns an error even when the call to the previous function was successful!</a>
+    </h2>
+    <p>
+    Of course, read perror(3).
+    </p>
+    <p>
+    Or in <a href="http://www.it.uc3m.es/rsfuente/index.html">Rafael</a>'s words:
+    </p>
+    <div class=cite><pre>"perror" should only be used in case of failure. The errno
+associated value may make no sense in case of success.
+
+Some additional background about errors in Linux programs:
+When you're using a C library, you'll discover that one way
+of reporting failures is not only by returning a specific
+value (from a function) to indicate an error, but also by
+setting the global variable errno to indicate the cause of the
+problem. The errno global variable  is defined in the
+&lt;errno.h&gt; header, along with all of its possible values
+defined as constants. Let's take a look at some C code
+demonstrating the use of errno and a pair of functions to
+transform that error code into something more human-readable:
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+
+int main() {
+  int fd;
+
+  // Crea un socket UDP, forzando un error (nótese 3er parámetro)
+  if ((fd=socket(AF_INET,SOCK_DGRAM,27)) &lt; 0) {
+    perror("Error abriendo socket");
+    printf("Error abriendo socket: %s\n", strerror(errno));
+    exit(1);
+  }
+}
+
+//Salida por consola:
+//Error abriendo socket: Protocol not supported
+//Error abriendo socket: Protocol not supported
+
+As you can see above, the perror() function displays the
+string you pass to it, followed by a colon, a space, and then
+the textual representation of the current errno value. You can
+also simulate this by using a printf() call and the strerror()
+function, which returns a pointer to the textual
+representation of the current errno value.</pre></div>
+
+
+  <h2>
+  <a name="reuse">How can I reuse ports?</a>
+  </h2>
+  <p>
+  With <tt>setsockopt(2)</tt> using <tt>SO_REUSEADDR</tt> option. Did you read <a href="http://beej.us/guide/bgnet/">Beej's Guide to Network Programming</a>?.
+  </p>
+
+  <h2>
+  <a name="lint">How do I insert a long integer in network byte order in a 3 byte buffer?</a>
+  </h2>
+  <p>
+  You have to deal with <a href="http://en.wikipedia.org/wiki/Endianness">endianness</a> issues and
+  the <a href="http://en.wikipedia.org/wiki/C_variable_types_and_declarations">different sizes</a> of
+  "long int" on the different architectures and compilers. The code bellow can help you:
+  </p>
+  <div class=code><pre>// "where" must be preallocated to fit 3 bytes
+void
+htonl3bytes(long int data, void* where) {
+    long int nl;
+    nl = htonl(data);
+    void* nlvoid = (void*) &amp;nl;
+    memcpy(where,   nlvoid+1, 1);
+    memcpy(where+1, nlvoid+2, 1);
+    memcpy(where+2, nlvoid+3, 1);
+    return;
+}
+
+long int
+ntohl3bytes(void* where) {
+    long int hl = 0;
+    void* hlvoid = (void*) &amp;hl;
+    memcpy(hlvoid+1, where,   1);
+    memcpy(hlvoid+2, where+1, 1);
+    memcpy(hlvoid+3, where+2, 1);
+    return(ntohl(hl));
+}</pre></div>
+
+
+  <h2>
+  <a name="casting">Is the casting of a struct to void* a good idea for sending data on a socket?
+  </a>
+  </h2>
+  <p>
+  No. You must insert each struct member one by one into the buffer. Use memcpy(3). The size of a struct can 
+  change from one architecture to another, compilations options and other tricks can also change it's size.
+  </p>
+
+	<h2>
+  <a name="goodcode">
+  I don't know how to comment my code. I want to improve my programming skills.
+  </a>
+  </h2>
+  <p>
+  Read "<a href="http://cm.bell-labs.com/cm/cs/tpop/">The Practice of Programming</a>".
+  </p>
+
+  <h2>
+  <a name="sig">
+  Asynchronous signals &amp; pthreads, or how to mix oil &amp; water.
+  </a>
+  </h2>
+  <p>
+  Mixing asynchronous signals &amp; pthreads can be a time sink if you don't know the full
+  story behind each of these beasts. If you don't have the time or the disposition to learn
+	it, here are some advices:
+  </p>
+
+  <ul>
+  <li>
+  A pthread inherits its signal mask from the thread or process that created it
+  </li>
+  <li>
+  If more than one thread in a process have an asynchronous signal non-blocked, the signal will
+  be delivered ramdomly to one of those threads
+  </li>
+  <li>
+  Pthreads calls are <b>NOT</b> asynchronous signal-safe functions
+  </li>
+  </ul>
+
+  <p>
+  So, if you want to kill the application with a <tt>C-c</tt>, for example, setting the main thread as the
+  only receiver of SIGINT, and calling <tt>pthread_cancel(3)</tt> from its signal handler won't
+  do the trick.
+  </p>
+
+  <p>
+  Generally, you will need to use <tt>sigwait(3)</tt> in one of the threads to catch the signal, and then start
+  a graceful shutdown of your program. In order to properly take your program to an end, you must:
+  </p>
+
+  <ul>
+  <li>
+  Use <tt>pthread_cancel(3)</tt>: Only if you master pthread <b>deferred cancellation</b>, understand
+  pthread <b>cancellation points</b> and know what library functions are <b>cancellation-safe</b>
+  </li>
+  <li>
+  A priori design your program to handle shutdowns gracefully.
+  </li>
+  </ul>
+
+  <p>
+  If you are lucky enough not to need graceful shutdowns (because you don't have to keep state
+  information, for exaple), you can simply <tt>exit(3)</tt> from your main pthread.
+  </p>
+
+  <h2>
+  <a name="htons">How to use htons()</tt>, htonl()</tt>, ntohs()</tt>, ntohl()</tt>?</a>
+  </h2>
+  <p>
+	<tt>htons()</tt> and <tt>htonl()</tt> functions must be used with
+	the <tt>sin_addr</tt> and <tt>sin_port</tt> fields on the
+	<tt>sockaddr</tt>/<tt>sockaddr_in</tt> structs. When sending
+	data (2-byte shorts, 4-byte integers ), <tt>htons()</tt> and
+	<tt>htonl()</tt> must also be used, since the socket interface
+	specifies big-endian ordering as standard byte ordering.
+	</p>
+
+	<p>
+	When receiving data (2-byte shorts, 4-byte integers), the reverse
+	functions <tt>ntohs()</tt> and <tt>ntohl()</tt> must be used to
+	convert to host byte order.
+	</p>
+
+	<p>
+	Note that if the machine is big-endian, each of the four
+	macros (i.e. <tt>ntohs</tt>, <tt>ntohl</tt>, <tt>htons</tt>,
+	<tt>htonl</tt>) will be defined to do nothing.
+	</p>
+
+	<p>
+	Examples of little-endian machines are the Intel x86 family and
+	Digital Equipment Corporation architectures (PDP-11, VAX, Alpha),
+	while the Sun SPARC, IBM 360/370, and Motorola 68000 and 88000
+	architectures are Big-Endians. Still, other architectures such
+	as PowerPC, MIPS, and Intel's 64 IA-64 are Bi-Endian, i.e. they
+	are capable of operating in either Big-Endian or Little-Endian mode.
+	</p>
+
+  <h2>
+  <a name="endian">How to check Endian type at run time?</a>
+  </h2>
+  <p>
+	Although it is not required for the practical assignemend to check
+	Endian type, you can use the following code:
+  </p>
+	
+	<div class="code">
+	<pre>
+#define BIG_ENDIAN      0
+#define LITTLE_ENDIAN   1
+
+int
+TestByteOrder()
+{
+	short s = 0x0001;
+	char *byte = (char *) &s;
+	return(byte[0] ? LITTLE_ENDIAN : BIG_ENDIAN);
+} 
+	</pre>
+	</div>
+
+	<h1>
+  <a name="faq">3. About this FAQ</a>
+  </h1>
+
+  <h2>
+  <a name="this">What is this FAQ?</a>
+  </h2>
+  <p>
+  This is the FAQ for the <a href="http://www.it.uc3m.es/celeste/docencia/inf/rroo/">Computer Network II</a>
+	course (5th year, Computer Science Eng.) at <a href="http://www.uc3m.es">University Carlos III</a>.
+  </p>
+
+  <h2>
+  <a name="en">Why is this FAQ in english?</a>
+  </h2>
+  <p>
+  To be more useful.
+  </p>
+
+  <h2>
+  <a name="bad">Why is this FAQ so badly written?</a>
+  </h2>
+  <p>
+  Sorry, english is not my native tongue.
+  </p>
+
+  <h2>
+  <a name="mantainer">Who mantains this FAQ?</a>
+  </h2>
+  <p>
+  <a href="http://it.uc3m.es/alcortes/index.html">Alberto Cort&eacute;s</a>.
+  </p>
+
+  <h2>
+  <a name="nothere">What if I don't find my question here?, What if I don't like the answer?</a>
+  </h2>
+  <ol>
+  <li><a href="http://www.google.com">google for it</a>.</li>
+  <li>Ask the course professors in a <a href="http://catb.org/esr/faqs/smart-questions.html">smart way</a>.</li>
+  </ol>
+
+  <h2>
+  <a name="change">Will this FAQ change a lot?, Should I keep an eye on it weekly?</a>
+  </h2>
+  <p>
+  Yes and yes.
+  </p>
+
+  <h2>
+  <a name="clueless">What does things like "printf(3)" means?</a>
+  </h2>
+  <p>
+  This is a standar notation for referencing manpages. Something like "printf(3)" means that you should read
+	the manual page for "printf" on section "3" of the manual, that is:
+  </p>
+  <div class=samp><pre>$ man 3 printf</pre></div>
+
+
+  <p>
+  <i>Alberto Cort&eacute;s Mart&iacute;n</i>, last modified: 2008-04-03
+  </p>
+
+
+  <p><a href="http://validator.w3.org/check?uri=http://it.uc3m.es/alcortes/asignaturas/iro2/faq/faq.html"><img style="border:0; width:88px; height:31px" src="valid-html401.png" alt="Valid HTML 4.01!"></a></p>
+
+</body>
+</html>
+<!-- vim: set ts=2: -->

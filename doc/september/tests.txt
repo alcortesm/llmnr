@@ -1,0 +1,243 @@
+﻿Llmnr test guide                                                alcortes
+================                                              2008-07-21
+                                                              version 03
+
+1. Introduction
+---------------
+
+This guide shows how to pass some tests to the llmnr application. It’s
+based upon the one the teachers used for the 2008 February exam. 
+
+The tests proposed here are not exhaustive or unequivocal, but they are
+good examples of what is expect from your application. Note that the
+lab assignment is the official reference in case of doubt.
+
+The automatic assessment will be based on these tests, but will be more
+exhaustive. This is not a collection of tests vectors; it’s just a
+complement to the lab assignment. An application that passes these
+tests can fail on the automatic assessment and vice versa, but it will
+be unusual.
+
+If you found error son this document, please send a patch as soon as
+possible to:
+
+    Alberto Cortés <alcortes@it.uc3m.es>
+
+Modifications to this file will be broadcasted to your student email
+accounts.
+
+2. How to use this guide
+------------------------
+
+All invocations shown here are for the ‘bash’ shell, note that ‘bash’
+is not the default shell for most of the student accounts.
+
+You will need to launch text terminals in three different hosts. You
+will be using those terminals to launch llmnr senders and receivers
+with different configuration files, so you will also need the
+configuration files.
+
+The hosts to run these test are:
+
+ monitor01.lab.it.uc3m.es 163.117.144.241
+ monitor02.lab.it.uc3m.es 163.117.144.242
+ monitor03.lab.it.uc3m.es 163.117.144.140
+
+The configuration files are:
+
+ http://it.uc3m.es/alcortes/asignaturas/iro2/1.conf
+ http://it.uc3m.es/alcortes/asignaturas/iro2/2.conf
+ http://it.uc3m.es/alcortes/asignaturas/iro2/3.conf
+
+Each group will be using a different port to prevent interfering with
+the other student’s applications. Declare an environment variable
+called 'port’ and set it to your group number plus 5000. Example: group
+nine will type:
+
+    ; export port=5009
+
+On each of its terminals.
+
+To clearly show on which host are we running each invocation we have
+change the prompt of the terminals to something sort and useful: '1; '
+for monitor01, '2; ' for monitor02 and '3; ' for monitor03.
+
+    alcortes@monitor01# export PS1='1; '
+    1; 
+
+    alcortes@monitor02# export PS1='2; '
+    2; 
+
+    alcortes@monitor03# export PS1='3; '
+    3; 
+
+Example: The students of group nine could change the default bash
+settings to have all the above this for free adding the following
+lines to ‘~/.bashrc’:
+
+    # iro2 test stuff
+    if [ `hostname` == 'monitor01' ]
+    then
+        export PS1='1; ';
+    elif [ `hostname` == 'monitor02' ]
+    then
+        export PS1='2; ';
+    elif [ `hostname` == 'monitor03' ]
+    then
+        export PS1='3; ';
+    else
+        export PS1='\h; ';
+    fi
+    export port=5009
+
+
+
+3. Tests and their results
+--------------------------
+
+(Test 01) A query
+
+    1; llmnr -p $port -r 1.conf
+
+    2; llmnr host1.uc3m.es
+    #[2008-04-01 17:01:34+01:00] query sent [id: 0x0f12]
+    #[2008-04-01 17:01:34+01:00] answer received from: 163.117.144.241 [id: 0x0f12]
+    host1.uc3m.es.  50      IN A        163.117.144.241
+    2; echo $?
+    0
+
+
+
+(Test 02) A and CNAME query
+
+    2; llmnr -p ${port} www.uc3m.es CNAME
+    #[2008-04-01 17:03:02+01:00] query sent [id: 0x23fa]
+    #[2008-04-01 17:03:02+01:00] answer received from: 163.117.144.241 [id: 0x23fa]
+    www.uc3m.es.    86400   IN CNAME    host1.uc3m.es.
+
+    2; llmnr -p ${port} www.uc3m.es A
+    #[2008-04-01 17:06:43+01:00] query sent [id: 0x4d4a]
+    #[2008-04-01 17:06:43+01:00] answer received from: 163.117.144.241 [id: 4d4a]
+    www.uc3m.es.    86400   IN CNAME    host1.uc3m.es.
+    host1.uc3m.es.  50      IN A        163.117.144.241
+
+
+
+
+(Test 03) Interactive mode query and local query
+
+    3; llmnr -p ${port} -i -r 3.conf
+    llmnr> host1.uc3m.es MX
+    #[2008-04-01 17:12:24+01:00] query sent [id: 0x3e78]
+    #[2008-04-01 17:12:24+01:00] answer received from: 163.117.144.241 [id: 0x3e78]
+    host1.uc3m.es.  86400   IN MX       1 smtp1.uc3m.es.
+    host1.uc3m.es.  86400   IN MX       2 smtp2.uc3m.es.
+    host1.uc3m.es.  86400   IN MX       3 smtp3.uc3m.es.
+
+    2; llmnr -p ${port} host3.uc3m.es SOA
+    #[2008-04-01 17:15:20+01:00] query sent [id: 0x05a2]
+    #[2008-04-01 17:15:20+01:00] answer received from: 163.117.144.140 [id: 0x05a2]
+    host3.uc3m.es.  86400   IN SOA      ns1.uc3m.es. root.uc3m.es 200510011 28800 7200 604800 86400
+
+After that, back in terminal 3...
+
+    llmnr> host3.uc3m.es A
+    host3.uc3m.es.  50      IN  A       163.117.144.140
+
+This last query is local to terminal 3. You can resolve it using local
+communication between the sender and its local responder or using a
+multicast query as usual.
+
+
+(Test 04) PTR query with two active responders
+
+    2; llmnr -p ${port} 140.144.117.163.in-addr.arpa PTR
+    #[2008-04-01 17:22:12+01:00] query sent [id: 0x4f22]
+    #[2008-04-01 17:22:12+01:00] answer received from: 163.117.144.140 [id: 0x4f22]
+    140.144.117.163.in-addr.arpa. 50 PTR host3.uc3m.es.
+    2; llmnr -p ${port} 163.117.144.241 PTR
+    #[2008-04-01 17:24:18+01:00] query sent [id: 0x367a]
+    #[2008-04-01 17:24:18+01:00] answer received from: 163.117.144.241 [id: 0x367a]
+    241.144.117.163.in-addr.arpa. 50 PTR host1.uc3m.es.
+
+
+
+
+(Test 05) Retransmissions
+
+    2; llmnr -p ${port} uc3m.es SOA
+    #[2008-04-01 17:32:05+01:00] query sent [id: 0x2813]
+    #[2008-04-01 17:32:06+01:00] query sent [id: 0x27b2]
+    #[2008-04-01 17:32:07+01:00] query sent [id: 0x11f6]
+    2; echo $?
+    1
+
+
+
+(Test 06) RFC compliantness
+
+    2; sudo tcpdump -s0 port ${port} -w /tmp/captura-${port}
+    <introducir contraseña>
+    <C-z>
+    2; bg
+    2; llmnr -p ${port} host1.uc3m.es SOA
+    #[2008-04-01 17:37:10+01:00] query sent [id: 0x422c]
+    #[2008-04-01 17:37:10+01:00] answer received from: 163.117.144.241 [id: 0x422c]
+    host1.uc3m.es. 86400 IN SOA ns1.uc3m.es. root.uc3m.es 200510011 28800 7200 604800 86400
+    2; fg
+    <C-c>
+    2; ethereal /tmp/captura-${port}
+
+
+Use wireshark to show if you are sending bad llmnr payloads. Note:
+responses must carry the query.
+
+
+(Test 07) Big payload
+
+    2; llmnr -p ${port} -r 2.conf
+
+On terminal 3, still on Interactive mode...
+
+    llmnr> host2.uc3m.es MX
+    #[2008-04-01 17:41:12+01:00] query sent [id: 0xafd2]
+    #[2008-04-01 17:41:12+01:00] answer received from: 163.117.141.242 [id: 0xafd2]
+    #[2008-04-01 17:41:12+01:00] query sent [id: 0x2d17]
+    #[2008-04-01 17:41:12+01:00] answer received from: 163.117.141.242 [id: 0x2d17]
+    host2.uc3m.es 86400 IN MX 1 mx1.uc3m.es
+    host2.uc3m.es 86400 IN MX 2 mx2.uc3m.es
+    host2.uc3m.es 86400 IN MX 3 mx3.uc3m.es
+    host2.uc3m.es 86400 IN MX 4 mx4.uc3m.es
+    host2.uc3m.es 86400 IN MX 5 mx5.uc3m.es
+    host2.uc3m.es 86400 IN MX 6 mx6.uc3m.es
+    host2.uc3m.es 86400 IN MX 7 mx7.uc3m.es
+    host2.uc3m.es 86400 IN MX 8 mx8.uc3m.es
+    host2.uc3m.es 86400 IN MX 9 mx9.uc3m.es
+    host2.uc3m.es 86400 IN MX 10 mx10.uc3m.es
+    host2.uc3m.es 86400 IN MX 11 mx11.uc3m.es
+    host2.uc3m.es 86400 IN MX 12 mx12.uc3m.es
+    ...
+
+And so forth until 500.
+
+The second query must be a TCP query
+
+
+
+
+(Test 08) Uniqueness
+
+Kill the responder on terminal 2.
+
+    2; llmnr -p ${port} -i -r 1.conf
+    #[2008-04-01 17:55:00+01:00] resource record RR conflict with 163.117.144.241
+
+There should be as much traces as RR in conflict.
+
+To known if the conflict has been resolved...
+
+    llmnr> host1.uc3m.es
+    #[2008-04-01 17:57:05+01:00] query sent [id: 0x32ad]".
+    #[2008-04-01 17:57:05+01:00] answer received from: 163.117.144.241 [id: 0x32ad]".
+    host1.uc3m.es       86400   IN A        163.117.144.241
+

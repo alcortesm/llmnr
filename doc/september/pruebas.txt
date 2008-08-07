@@ -1,0 +1,252 @@
+﻿Guía de pruebas de llmnr                                        alcortes
+========================                                      2008-07-21
+                                                              versión 03
+
+1. Introducción
+---------------
+
+Este fichero es una guía de como pasarle algunas pruebas al programa
+llmnr. Está basado en el que usamos los profesores de la asignatura en
+el examen de Febrero de 2008.
+
+Las pruebas que aquí se proponen no son exhaustivas, concluyentes o
+vinculantes pero si son buenos ejemplos de lo que se espera de vuestro
+programa. En caso de duda, recordad que el enunciado de la práctica es
+la referencia oficial en cuanto al comportamiento de la práctica.
+
+La corrección automática de la práctica estará basada en este fichero
+aunque será más exhaustiva. No toméis este fichero como un vector de
+pruebas, es simplemente un complemento al enunciado. Una práctica que
+pase estás pruebas podría suspender la corrección automática y
+viceversa, aunque sería extraño.
+
+Es posible que el presente documento contenga errores, si detectas
+alguno manda lo antes posible una descripción del mismo y tu parche (en
+formato 'patch' por ejemplo) a:
+
+Alberto Cortés <alcortes@it.uc3m.es>
+
+Las modificaciones a este fichero se publicarán mediante avisos a
+vuestro correo electrónico de alumnos.
+
+
+2. Cómo utilizar esta guía
+--------------------------
+
+Todos los ejemplos de esta guía suponen que se está utilizando la shell
+bash. Muchos alumnos no tienen definida la bash como la shell por
+defecto así que ¡cuidado!
+
+Para usar esta guía necesitas lanzar tres terminales de texto en tres
+máquinas diferentes. En cada uno de ellos vas a lanzaras senders y
+responders de llmnr con diferentes ficheros de configuración, por lo que
+necesitarás también los ficheros de configuración.
+
+Las máquinas que se van a utilizar en estas pruebas son:
+
+ monitor01.lab.it.uc3m.es 163.117.144.241
+ monitor02.lab.it.uc3m.es 163.117.144.242
+ monitor03.lab.it.uc3m.es 163.117.144.140
+
+Los ficheros de configuración te los puedes bajar de:
+
+ http://it.uc3m.es/alcortes/asignaturas/iro2/1.conf
+ http://it.uc3m.es/alcortes/asignaturas/iro2/2.conf
+ http://it.uc3m.es/alcortes/asignaturas/iro2/3.conf
+
+Para evitar que utilicéis todos los mismos puertos vamos a utilizar una
+variable de entorno "port" que contendrá el valor del puerto a utilizar
+y que valdrá 5000 mas el número de vuestro grupo. Por ejemplo, el grupo
+9 tendrá que definir:
+
+    ; export port=5009
+
+Habrá que definir la variable en un terminal de cada una de las tres
+máquinas
+
+Para referirnos con sencillez a ejecutar código en cada una de las tres
+máquinas supondremos que habéis reconfigurado el prompt de uno de los
+terminales a '1; ', '2; ' y '3 ;' de la forma siguiente:
+
+    alcortes@monitor01# export PS1='1; '
+    1;
+
+    alcortes@monitor02# export PS1='2; '
+    2; 
+    
+    alcortes@monitor03# export PS1='3; '
+    3; 
+
+
+El grupo 9 podría automatizar todos estos preparativos añadiendo al
+fichero ~/.bashrc lo siguiente:
+
+    # iro2 test stuff
+    if [ `hostname` == 'monitor01' ]
+    then
+        export PS1='1; ';
+    elif [ `hostname` == 'monitor02' ]
+    then
+        export PS1='2; ';
+    elif [ `hostname` == 'monitor03' ]
+    then
+        export PS1='3; ';
+    else
+        export PS1='\h; ';
+    fi
+    export port=5009
+
+
+
+3. Pruebas recomendadas y sus resultados
+----------------------------------------
+
+(Prueba 01) Consulta A
+
+    1; llmnr -p $port -r 1.conf
+
+    2; llmnr host1.uc3m.es
+    #[2008-04-01 17:01:34+01:00] query sent [id: 0x0f12]
+    #[2008-04-01 17:01:34+01:00] answer received from: 163.117.144.241 [id: 0x0f12]
+    host1.uc3m.es.  50      IN A        163.117.144.241
+    2; echo $?
+    0
+
+
+
+(Prueba 02) Consulta A y CNAME
+
+    2; llmnr -p ${port} www.uc3m.es CNAME
+    #[2008-04-01 17:03:02+01:00] query sent [id: 0x23fa]
+    #[2008-04-01 17:03:02+01:00] answer received from: 163.117.144.241 [id: 0x23fa]
+    www.uc3m.es.    86400   IN CNAME    host1.uc3m.es.
+
+    2; llmnr -p ${port} www.uc3m.es A
+    #[2008-04-01 17:06:43+01:00] query sent [id: 0x4d4a]
+    #[2008-04-01 17:06:43+01:00] answer received from: 163.117.144.241 [id: 4d4a]
+    www.uc3m.es.    86400   IN CNAME    host1.uc3m.es.
+    host1.uc3m.es.  50      IN A        163.117.144.241
+
+
+
+
+(Prueba 03) Consulta modo interactivo y consulta local
+
+    3; llmnr -p ${port} -i -r 3.conf
+    llmnr> host1.uc3m.es MX
+    #[2008-04-01 17:12:24+01:00] query sent [id: 0x3e78]
+    #[2008-04-01 17:12:24+01:00] answer received from: 163.117.144.241 [id: 0x3e78]
+    host1.uc3m.es.  86400   IN MX       1 smtp1.uc3m.es.
+    host1.uc3m.es.  86400   IN MX       2 smtp2.uc3m.es.
+    host1.uc3m.es.  86400   IN MX       3 smtp3.uc3m.es.
+
+    2; llmnr -p ${port} host3.uc3m.es SOA
+    #[2008-04-01 17:15:20+01:00] query sent [id: 0x05a2]
+    #[2008-04-01 17:15:20+01:00] answer received from: 163.117.144.140 [id: 0x05a2]
+    host3.uc3m.es.  86400   IN SOA      ns1.uc3m.es. root.uc3m.es 200510011 28800 7200 604800 86400
+
+Después de eso, de vuelta en el terminal 3...
+
+    llmnr> host3.uc3m.es A
+    host3.uc3m.es.  50      IN  A       163.117.144.140
+
+Esta última consulta es local, dependiendo de la implementación,
+la pregunta puede hacerse por multicast o mediante otros medios
+de comunicación locales al terminal 3.
+
+
+(Prueba 04) Consulta PTR dos responders activos
+
+    2; llmnr -p ${port} 140.144.117.163.in-addr.arpa PTR
+    #[2008-04-01 17:22:12+01:00] query sent [id: 0x4f22]
+    #[2008-04-01 17:22:12+01:00] answer received from: 163.117.144.140 [id: 0x4f22]
+    140.144.117.163.in-addr.arpa. 50 PTR host3.uc3m.es.
+    2; llmnr -p ${port} 163.117.144.241 PTR
+    #[2008-04-01 17:24:18+01:00] query sent [id: 0x367a]
+    #[2008-04-01 17:24:18+01:00] answer received from: 163.117.144.241 [id: 0x367a]
+    241.144.117.163.in-addr.arpa. 50 PTR host1.uc3m.es.
+
+
+
+
+(Prueba 05) Retransmisiones
+
+    2; llmnr -p ${port} uc3m.es SOA
+    #[2008-04-01 17:32:05+01:00] query sent [id: 0x2813]
+    #[2008-04-01 17:32:06+01:00] query sent [id: 0x27b2]
+    #[2008-04-01 17:32:07+01:00] query sent [id: 0x11f6]
+    2; echo $?
+    1
+
+
+
+(Prueba 06) Estructura del paquete
+
+    2; sudo tcpdump -s0 port ${port} -w /tmp/captura-${port}
+    <introducir contraseña>
+    <C-z>
+    2; bg
+    2; llmnr -p ${port} host1.uc3m.es SOA
+    #[2008-04-01 17:37:10+01:00] query sent [id: 0x422c]
+    #[2008-04-01 17:37:10+01:00] answer received from: 163.117.144.241 [id: 0x422c]
+    host1.uc3m.es. 86400 IN SOA ns1.uc3m.es. root.uc3m.es 200510011 28800 7200 604800 86400
+    2; fg
+    <C-c>
+    2; ethereal /tmp/captura-${port}
+
+
+Hay que comprobar que wireshark es capaz de interpretar correctamente
+tanto la query como la response, recordad que la respuesta también
+lleva la información de la pregunta.
+
+
+
+(Prueba 07) Paquete largo
+
+    2; llmnr -p ${port} -r 2.conf
+
+En el terminal de la máquina 3, que sigue en modo interactivo...
+
+    llmnr> host2.uc3m.es MX
+    #[2008-04-01 17:41:12+01:00] query sent [id: 0xafd2]
+    #[2008-04-01 17:41:12+01:00] answer received from: 163.117.141.242 [id: 0xafd2]
+    #[2008-04-01 17:41:12+01:00] query sent [id: 0x2d17]
+    #[2008-04-01 17:41:12+01:00] answer received from: 163.117.141.242 [id: 0x2d17]
+    host2.uc3m.es 86400 IN MX 1 mx1.uc3m.es
+    host2.uc3m.es 86400 IN MX 2 mx2.uc3m.es
+    host2.uc3m.es 86400 IN MX 3 mx3.uc3m.es
+    host2.uc3m.es 86400 IN MX 4 mx4.uc3m.es
+    host2.uc3m.es 86400 IN MX 5 mx5.uc3m.es
+    host2.uc3m.es 86400 IN MX 6 mx6.uc3m.es
+    host2.uc3m.es 86400 IN MX 7 mx7.uc3m.es
+    host2.uc3m.es 86400 IN MX 8 mx8.uc3m.es
+    host2.uc3m.es 86400 IN MX 9 mx9.uc3m.es
+    host2.uc3m.es 86400 IN MX 10 mx10.uc3m.es
+    host2.uc3m.es 86400 IN MX 11 mx11.uc3m.es
+    host2.uc3m.es 86400 IN MX 12 mx12.uc3m.es
+    ...
+
+y así hasta 500
+
+La segunda query va por tcp.
+
+
+
+
+(Prueba 08) Uniqueness
+
+Se mata el servidor de la máquina 2
+
+    2; llmnr -p ${port} -i -r 1.conf
+    #[2008-04-01 17:55:00+01:00] resource record RR conflict with 163.117.144.241
+
+
+Y tantas trazas como registros en conflicto, es decir todos los que hay
+en 1.conf. Para comprobar que se resuelve bien el conflicto, desde el
+terminal de la máquina 3...
+
+    llmnr> host1.uc3m.es
+    #[2008-04-01 17:57:05+01:00] query sent [id: 0x32ad]".
+    #[2008-04-01 17:57:05+01:00] answer received from: 163.117.144.241 [id: 0x32ad]".
+    host1.uc3m.es       86400   IN A        163.117.144.241
+
