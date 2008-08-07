@@ -1469,7 +1469,7 @@ void
 rrdb_test(void)
 {   
     { // good file
-        string file = "test.cc";
+        string file = "conf0.conf";
         try {
             RrDb db(file);
         } catch (RrDb::ExBadSyntax & e) {

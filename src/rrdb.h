@@ -15,6 +15,13 @@
 namespace rr {
     
     class RrDb {
+    private:
+        unsigned int d_size; // number of records
+        struct record {
+            rr::Rr const * rrp;
+            bool     tentative;
+        };
+        std::vector<struct record *> d_db;
     public:
         class ExBadSyntax {
         private:
@@ -34,17 +41,13 @@ namespace rr {
 
         RrDb(std::string const & path) throw (ExBadSyntax, ExCanNotReadFile);
         ~RrDb();
-        bool isEmpty();
-        bool isTentative(unsigned int index) throw (ExBadIndex);
+        bool isEmpty() const;
+        bool isTentative(unsigned int index) const throw (ExBadIndex);
         void setTentative(unsigned int index, bool tentative = true) throw (ExBadIndex);
-        unsigned int size();
+        unsigned int size() const;
+        rr::Rr const & operator[](unsigned int) const;
     private:
-        unsigned int d_size; // number of records
-        struct record {
-            rr::Rr * rr;
-            bool     tentative;
-        };
-        std::vector<struct record *> d_db;
+        friend std::ostream & operator<<(std::ostream & s, RrDb const & rrdb);
     };
 }
 #endif

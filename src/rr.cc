@@ -69,10 +69,10 @@ Rr::parse(string const & s) throw (Rr::ExNoContent, Rr::ExBadSyntax) {
     if (rdata_size == 0)
         throw Rr::ExBadSyntax();
     
-    string name_str  = s.substr(name_head,  name_size);
-    string type_str  = s.substr(type_head,  type_size);
-    string klass_str = s.substr(klass_head, klass_size);
-    string ttl_str   = s.substr(ttl_head,   ttl_size);
+    string const name_str  = s.substr(name_head,  name_size);
+    string const type_str  = s.substr(type_head,  type_size);
+    string const klass_str = s.substr(klass_head, klass_size);
+    string const ttl_str   = s.substr(ttl_head,   ttl_size);
     string const rdata_str = s.substr(rdata_head, rdata_size);
 
     Type const & type = Type::fromName(type_str);
