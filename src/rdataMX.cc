@@ -41,26 +41,26 @@ RdataMX::parse(string const & s) throw (Rdata::ExBadSyntax)
     string space = " ";
 
     if (s.length() < 3) // minimun is like "0 a"
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("too short");
 
     size_t first_space;
     first_space = s.find_first_of(space, 0);
     if (first_space == string::npos)
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("missing space");
     size_t preference_head = 0;
     size_t preference_size = first_space - preference_head;
 
     size_t exchange_head = s.find_first_not_of(space, first_space);
     if (exchange_head == string::npos)
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("missing exchange");
     if (exchange_head != first_space + 1)
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("more than one space");
     size_t exchange_size = s.length() - exchange_head;
     
     size_t more_space;
     more_space = s.find_first_of(space, exchange_head);
     if (more_space != string::npos)
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("space after exchange");
 
     string preference_str = s.substr(preference_head, preference_size);
     string exchange_str   = s.substr(exchange_head,   exchange_size);
@@ -69,7 +69,7 @@ RdataMX::parse(string const & s) throw (Rdata::ExBadSyntax)
     try {
         preference = util::str2uint16(preference_str);
     } catch (string & s) {
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax("preference is not a 16 bit unsigned integer");
     }
     
     RdataMX * datap = new RdataMX(preference, exchange_str);
@@ -128,7 +128,7 @@ RdataMX::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
     try {
         exchangep = util::buf2dnsname(offset);
     } catch (string & s) {
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax(s);
     }
     RdataMX const * dp = new RdataMX(preference, *exchangep);
     delete exchangep;

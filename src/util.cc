@@ -206,7 +206,7 @@ util::buf2dnsname(char const * & offset) throw (string)
         os += label_sz;
         if (os-s >= util::MAX_DNAME_SIZE+1) {
             free(s);
-            throw string("parse error: data too long");
+            throw string("data too long");
         }
 
         // write extra dot
@@ -214,7 +214,7 @@ util::buf2dnsname(char const * & offset) throw (string)
         os++;
         if ((os-s) > util::MAX_DNAME_SIZE+1) {
             free(s);
-            throw string("parse error: data too long");
+            throw string("data too long");
         }
     }
 

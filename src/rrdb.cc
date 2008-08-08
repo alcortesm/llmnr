@@ -9,25 +9,18 @@ using std::string;
 using rr::Rr;
 using rr::RrDb;
 
-RrDb::ExBadSyntax::ExBadSyntax(unsigned int line)
-    : d_line(line)
+RrDb::ExBadSyntax::ExBadSyntax(string const & s)
+    : invalid_argument(s)
 {}
 
-unsigned int const
-RrDb::ExBadSyntax::line()
-{
-    return d_line;
-}
-
-RrDb::ExCanNotReadFile::ExCanNotReadFile(string const & diag)
-    : d_diag(diag)
+RrDb::ExBadIndex::ExBadIndex(string const & s)
+    : invalid_argument(s)
 {}
 
-string const &
-RrDb::ExCanNotReadFile::diag()
-{
-    return d_diag;
-}
+RrDb::ExCanNotReadFile::ExCanNotReadFile(string const & s)
+    : invalid_argument(s)
+{}
+
 
 RrDb::RrDb(string const & path) throw(ExBadSyntax, ExCanNotReadFile)
     : d_size(0), d_db()
@@ -57,7 +50,7 @@ RrDb::RrDb(string const & path) throw(ExBadSyntax, ExCanNotReadFile)
         } catch (Rr::ExNoContent & e) { // blank line
             continue;
         } catch (Rr::ExBadSyntax & e) {
-            throw ExBadSyntax(ln);
+            throw RrDb::ExBadSyntax(e.what());
         }
         record.rrp = rrp;
         record.tentative = true;

@@ -25,7 +25,7 @@ RdataA::parse(string const & s) throw (Rdata::ExBadSyntax)
     struct in_addr in;
     r = inet_aton(cp, &in);
     if (r == 0)
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax(s + ": bad ip");
 
     RdataA * datap = new RdataA(in.s_addr);
     return datap;

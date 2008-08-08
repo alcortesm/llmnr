@@ -8,9 +8,4 @@ read http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-lik
 
 rdataCNAME, rdataSOA, rdataPTR
 
-los constructuctores que llanzan excepciones no destruyen los objetos, hay que destruirlos desde el catch, si se usan punteros dentro del constructor habría que liberarlos antes del throw o usar smart pointers
-
-Las Excepciones deberían heredar de Excepcion
-
 code rrdb
-FIX RrDb::RrDb -> learn to open and read files using exceptions in C++

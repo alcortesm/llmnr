@@ -6,6 +6,7 @@
 #include "type.h"
 #include "klass.h"
 #include <iostream>
+#include <stdexcept>
 
 namespace rr {
 
@@ -16,7 +17,10 @@ namespace rr {
         virtual void printOn(std::ostream & s) const = 0; // used to virtualize opeator<<
         virtual bool equals(rr::Rdata const & o) const = 0; // used to virtualize operator==
     public:
-        class ExBadSyntax {};
+        class ExBadSyntax : public std::invalid_argument {
+            public:
+                ExBadSyntax(std::string const & s);
+        };
         friend std::ostream & operator<<(std::ostream & s, rr::Rdata const & data);
         friend bool operator==(rr::Rdata const & a, rr::Rdata const & b);
         friend bool operator!=(rr::Rdata const & a, rr::Rdata const & b);

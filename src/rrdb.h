@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #include "rr.h"
 
@@ -23,20 +24,17 @@ namespace rr {
         };
         std::vector<struct record *> d_db;
     public:
-        class ExBadSyntax {
-        private:
-            unsigned int const d_line;
-        public:
-            ExBadSyntax(unsigned int line);
-            unsigned int const line();
+        class ExBadSyntax : public std::invalid_argument {
+            public:
+                ExBadSyntax(std::string const & s);
         };
-        class ExBadIndex {};
-        class ExCanNotReadFile {
-        private:
-            std::string const d_diag;
-        public:
-            ExCanNotReadFile(std::string const & diag);
-            std::string const & diag();
+        class ExBadIndex : public std::invalid_argument {
+            public:
+                ExBadIndex(std::string const & s);
+        };
+        class ExCanNotReadFile : public std::invalid_argument {
+            public:
+                ExCanNotReadFile(std::string const & s);
         };
 
         RrDb(std::string const & path) throw (ExBadSyntax, ExCanNotReadFile);

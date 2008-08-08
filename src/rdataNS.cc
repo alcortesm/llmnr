@@ -33,7 +33,7 @@ RdataNS const *
 RdataNS::parse(string const & s) throw (Rdata::ExBadSyntax)
 {
     if (!util::isDomainName(s))
-        throw Rdata::ExBadSyntax();
+        throw Rdata::ExBadSyntax(s + ": bad domain name");
     RdataNS * datap = new RdataNS(s);
     return datap;
 }
@@ -75,8 +75,8 @@ RdataNS::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
     string * sp;
     try {
         sp = util::buf2dnsname(offset);
-    } catch (string & ex) {
-        throw Rdata::ExBadSyntax();
+    } catch (string & e) {
+        throw Rdata::ExBadSyntax("unmarshalling error for NS RR: " + e);
     }
 
     RdataNS const * dp;

@@ -616,15 +616,15 @@ rr_test(void)
             rrp = Rr::parse(*sp);
             cerr << "Rr::parse() of an empty string did not launch an exception" << endl ;
             exit(EXIT_FAILURE);
-        } catch (Rr::ExNoContent) {
+        } catch (Rr::ExNoContent & e) {
             // OK
-        } catch (Rr::ExBadSyntax) {
+        } catch (Rr::ExBadSyntax & e) {
             cerr << "Rr::parse() of an empty string launched ExBadSyntax" << endl ;
             exit(EXIT_FAILURE);
         }
         delete sp;
     }
-
+    return;
     { // blank string must throw ExNoContent
         string const * sp;
         Rr     const * rrp;
@@ -986,7 +986,9 @@ rdataA_test(void)
             datap = RdataA::parse("hola");
             cerr << "RdataA::parse(\"hola\") did not throw any Exception" << endl;
             exit(EXIT_FAILURE);
-        } catch (Rdata::ExBadSyntax) {}
+        } catch (Rdata::ExBadSyntax & e) {
+            // ok
+        }
     }
 
 
@@ -996,7 +998,7 @@ rdataA_test(void)
         string s("163.117.141.12");
         try {
             datap = RdataA::parse(s);
-        } catch (Rdata::ExBadSyntax) {
+        } catch (Rdata::ExBadSyntax & e) {
             cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
             exit(EXIT_FAILURE);
         }
@@ -1059,7 +1061,7 @@ rdataA_test(void)
         string s("163.117.141.12");
         try {
             datap = RdataA::parse(s);
-        } catch (Rdata::ExBadSyntax) {
+        } catch (Rdata::ExBadSyntax & e) {
             cerr << "RdataA::parse(\"" << s << "\") throws  Rdata::ExBadSyntax" << endl;
             exit(EXIT_FAILURE);
         }
@@ -1473,10 +1475,10 @@ rrdb_test(void)
         try {
             RrDb db(file);
         } catch (RrDb::ExBadSyntax & e) {
-            cerr << "RrDb(" << file << ") throw ExBadSyntax on line " << e.line() << endl ; 
+            cerr << "RrDb(" << file << ") throw ExBadSyntax :" << e.what() << endl ; 
             exit(EXIT_FAILURE);
         } catch (RrDb::ExCanNotReadFile & e) {
-            cerr << "RrDb(" << file << ") throw ExCanNotReadFile because: " << e.diag() << endl ;
+            cerr << "RrDb(" << file << ") throw ExCanNotReadFile: " << e.what() << endl ;
             exit(EXIT_FAILURE);
         }
     }
