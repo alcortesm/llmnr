@@ -222,7 +222,7 @@ util_test(void)
         sp = new string(" ");
         r = util::isDomainName(*sp);
         delete sp;
-        assert(r && "isDomainName(\" \")");
+        assert(!r && "isDomainName(\" \")");
 
         sp = new string("it");
         r = util::isDomainName(*sp);
@@ -283,6 +283,90 @@ util_test(void)
         r = util::isDomainName(*sp);
         delete sp;
         assert(!r && "isDomainName(it.bla.a234567890123456789012345678901234567890123456789012345678901234)");
+    }
+
+    { // isFQDN
+        string * sp;
+        sp = new string("");
+        int r;
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(\"\")");
+
+        sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(r && "isFQDN(255 octets)");
+
+        sp = new string("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a234567890123456.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(256 octets)");
+
+        sp = new string(" .");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(\" \")");
+
+        sp = new string("it.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(r && "isFQDN(it.)");
+
+        sp = new string("it.uc3m.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(r && "isFQDN(it.uc3m.)");
+
+        sp = new string("it.uc3m.es.foo.bar.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(r && "isFQDN(it.uc3m.es.foo.bar.)");
+
+        sp = new string(".");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(.)");
+
+        sp = new string("it.uc3m.es.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(r && "isFQDN(it.uc3m.es.)");
+
+        sp = new string("it.uc3m..es.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.uc3m..es.)");
+
+        sp = new string("it.uc3m.es..");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.uc3m.es..)");
+
+        sp = new string("it.uc3m...es.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.uc3m...es.)");
+
+        sp = new string("it.uc3m.es...");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.uc3m.es...)");
+
+        sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.bla.a234567890123456789012345678901234567890123456789012345678901234.uc3m.es.)");
+
+        sp = new string("a234567890123456789012345678901234567890123456789012345678901234.uc3m.es.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(a234567890123456789012345678901234567890123456789012345678901234.uc3m.es.)");
+
+        sp = new string("it.bla.a234567890123456789012345678901234567890123456789012345678901234.");
+        r = util::isFQDN(*sp);
+        delete sp;
+        assert(!r && "isFQDN(it.bla.a234567890123456789012345678901234567890123456789012345678901234.)");
     }
 
     { // dnsname2buf and buf2dnsname
@@ -1269,12 +1353,12 @@ rdataNS_test(void)
         RdataNS const * datap;
 
         try {
-            datap = RdataNS::parse("0it.uc3m.es");
+            datap = RdataNS::parse("0it.uc3m.es.");
             cerr << "RdataNS::parse(\"0it.uc3m.es\") did not throw any Exception" << endl;
             exit(EXIT_FAILURE);
         } catch (Rdata::ExBadSyntax) {}
         try {
-            datap = RdataNS::parse("-2 it.uc3m.es");
+            datap = RdataNS::parse("-2 it.uc3m.es.");
             cerr << "RdataNS::parse(\"-2 it.uc3m.es\") did not throw any Exception" << endl;
             exit(EXIT_FAILURE);
         } catch (Rdata::ExBadSyntax) {}
@@ -1282,7 +1366,7 @@ rdataNS_test(void)
 
     { // good syntax, basic functions and streaming
         RdataNS const * datap;
-        string s("a.it.uc3m.es");
+        string s("a.it.uc3m.es.");
         try {
             datap = RdataNS::parse(s);
         } catch (Rdata::ExBadSyntax) {
@@ -1294,8 +1378,10 @@ rdataNS_test(void)
         assert(oss.str().compare(s) == 0);
         assert(Type::NS == datap->type());
         assert(Klass::IN == datap->klass());
-        assert(datap->nsdname().compare("a.it.uc3m.es") == 0);
-        assert(s.length() == datap->length());
+        string const * dnamep = util::fqdn2dname(s);
+        assert(datap->nsdname().compare(*dnamep) == 0);
+        delete dnamep;
+        assert(s.length()-1 == datap->length());
         delete datap;
     }
 
@@ -1303,7 +1389,7 @@ rdataNS_test(void)
         RdataNS const * ap;
         RdataNS const * cp;
 
-        string s("it.uc3m.es");
+        string s("it.uc3m.es.");
         try {
             ap = RdataNS::parse(s);
         } catch (Rdata::ExBadSyntax) {
@@ -1311,7 +1397,7 @@ rdataNS_test(void)
             exit(EXIT_FAILURE);
         }
         RdataNS const b = *ap;
-        string ss("lab.it.uc3m.es");
+        string ss("lab.it.uc3m.es.");
         try {
             cp = RdataNS::parse(ss);
         } catch (Rdata::ExBadSyntax) {
@@ -1339,7 +1425,7 @@ rdataNS_test(void)
     
     { //marshalling
         RdataNS const * beforep;
-        string s("ns.it.uc3m.es");
+        string s("ns.it.uc3m.es.");
         try {
             beforep = RdataNS::parse(s);
         } catch (Rdata::ExBadSyntax) {
@@ -1362,8 +1448,8 @@ rdataNS_test(void)
         RdataNS const * afterp;
         try {
             afterp = RdataNS::unmarshall(coffset);
-        } catch (Rdata::ExBadSyntax) {
-            cerr << "RdataNS::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax" << endl;
+        } catch (Rdata::ExBadSyntax & e) {
+            cerr << "RdataNS::unmarshall(\"" << coffset << "\") throws  Rdata::ExBadSyntax: " << e.what() << endl;
             exit(EXIT_FAILURE);
         }
         assert(*afterp == *beforep);
@@ -1376,7 +1462,7 @@ rdataNS_test(void)
     
     { // more marshalling, big name
         RdataNS const * beforep;
-        string s("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345");
+        string s("a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a2345678901234567890123456789012345678901234567890123456789.a23456789012345.");
         try {
             beforep = RdataNS::parse(s);
         } catch (Rdata::ExBadSyntax) {
@@ -1435,8 +1521,8 @@ rdata_test(void)
         string smx("0 saruman.it.uc3m.es");
         try {
             datap = RdataMX::parse(smx);
-        } catch (Rdata::ExBadSyntax) {
-            cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax" << endl;
+        } catch (Rdata::ExBadSyntax & e) {
+            cerr << "RdataMX::parse(\"" << smx << "\") throws  Rdata::ExBadSyntax: " << e.what() << endl;
             exit(EXIT_FAILURE);
         }
         assert(datap->length() == smx.length()-2+2);
@@ -1450,14 +1536,14 @@ rdata_test(void)
 
     { // NS records
         Rdata const * datap;
-        string sns("saruman.it.uc3m.es");
+        string sns("saruman.it.uc3m.es.");
         try {
             datap = RdataNS::parse(sns);
-        } catch (Rdata::ExBadSyntax) {
-            cerr << "RdataNS::parse(\"" << sns << "\") throws  Rdata::ExBadSyntax" << endl;
+        } catch (Rdata::ExBadSyntax & e) {
+            cerr << "RdataNS::parse(\"" << sns << "\") throws  Rdata::ExBadSyntax: " << e.what() << endl;
             exit(EXIT_FAILURE);
         }
-        assert(datap->length() == sns.length());
+        assert(datap->length() == sns.length()-1);
         assert(datap->type()  == Type::NS);
         assert(datap->klass() == Klass::IN);
         ostringstream ossns;
@@ -1472,8 +1558,9 @@ rrdb_test(void)
 {   
     { // good file
         string file = "conf0.conf";
+        RrDb * dbp;
         try {
-            RrDb db(file);
+            dbp = new RrDb(file);
         } catch (RrDb::ExBadSyntax & e) {
             cerr << "RrDb(" << file << ") throw ExBadSyntax :" << e.what() << endl ; 
             exit(EXIT_FAILURE);
@@ -1481,6 +1568,11 @@ rrdb_test(void)
             cerr << "RrDb(" << file << ") throw ExCanNotReadFile: " << e.what() << endl ;
             exit(EXIT_FAILURE);
         }
+
+        ostringstream oss;
+        oss << *dbp ;
+        assert(oss.str().compare("T : host1.uc3m.es.      50      IN      A       163.117.144.241\nT : host1.uc3m.es.      86400   IN      NS      ns1.uc3m.es.\nT : host1.uc3m.es.      86400   IN      NS      ns2.uc3m.es.\nT : host1.uc3m.es.      86400   IN      MX      1 smtp1.uc3m.es.\nT : host1.uc3m.es.      86400   IN      MX      2 smtp2.uc3m.es.\nT : host1.uc3m.es.      86400   IN      MX      3 smtp3.uc3m.es.\n"));
+        delete dbp;
     }
     return;
 }

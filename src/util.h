@@ -40,7 +40,10 @@ namespace util {
     bool           isDomainName(std::string const & s);
     bool           isLabel(std::string const & s, size_t head, size_t size);
     bool           isLabel(std::string const & s);
-
+    bool           isFQDN(std::string const & s);
+    std::string const * fqdn2dname(std::string const & fqdn);
+    std::string const * dname2fqdn(std::string const & dname);
+    
     /*
      * DNS names buffer representation
      */

@@ -23,7 +23,7 @@ RrDb::ExCanNotReadFile::ExCanNotReadFile(string const & s)
 
 
 RrDb::RrDb(string const & path) throw(ExBadSyntax, ExCanNotReadFile)
-    : d_size(0), d_db()
+    : d_db()
 {
     using std::ifstream;
     ifstream ifs;
@@ -44,7 +44,6 @@ RrDb::RrDb(string const & path) throw(ExBadSyntax, ExCanNotReadFile)
             throw ExCanNotReadFile("input error after reading line " + ln);
         }
         ln++;
-        std::clog << ln << ": " << line << std::endl ;
         try {
             rrp = Rr::parse(line);
         } catch (Rr::ExNoContent & e) { // blank line
@@ -54,32 +53,48 @@ RrDb::RrDb(string const & path) throw(ExBadSyntax, ExCanNotReadFile)
         }
         record.rrp = rrp;
         record.tentative = true;
-        d_db.push_back(&record);
-        delete(rrp);
+        d_db.push_back(record);
     }
 
     ifs.close();
 }
 
 RrDb::~RrDb()
-{}
-
-Rr const &
-RrDb::operator[](unsigned int i) const
 {
-    return *((d_db[i])->rrp);
+    for (size_t i=0; i<d_db.size(); i++) {
+        delete d_db[i].rrp;
+    }
 }
 
-unsigned int
+Rr const &
+RrDb::operator[](uint16_t i) const
+{
+    return *(d_db[i].rrp);
+}
+
+bool
+RrDb::isTentative(uint16_t i) const throw (RrDb::ExBadIndex)
+{
+    if (i > d_db.size()-1)
+        throw RrDb::ExBadIndex("index bigger than size");
+    return (d_db[i].tentative);
+}
+
+size_t
 RrDb::size() const
 {
-    return d_db.size();
+    return (size_t) d_db.size();
 }
 
 std::ostream &
-operator<<(std::ostream & s, RrDb const & rrdb)
+rr::operator<<(std::ostream & s, RrDb const & rrdb)
 {
-    for (unsigned int i=0; i<rrdb.size(); i++)
+    for (size_t i=0; i<rrdb.size(); i++) {
+        if (rrdb.isTentative(i))
+            s << "T : ";
+        else
+            s << "U : ";
         s << rrdb[i] << std::endl ;
+    }
     return s;
 }

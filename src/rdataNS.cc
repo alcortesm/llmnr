@@ -32,9 +32,11 @@ RdataNS::~RdataNS()
 RdataNS const *
 RdataNS::parse(string const & s) throw (Rdata::ExBadSyntax)
 {
-    if (!util::isDomainName(s))
-        throw Rdata::ExBadSyntax(s + ": bad domain name");
-    RdataNS * datap = new RdataNS(s);
+    if (!util::isFQDN(s))
+        throw Rdata::ExBadSyntax(s + ": bad FQDN");
+    string const * dnamep = util::fqdn2dname(s);
+    RdataNS * datap = new RdataNS(*dnamep);
+    delete dnamep;
     return datap;
 }
 
@@ -44,8 +46,7 @@ RdataNS::nsdname() const
     return *d_nsdnamep;
 }
 
-rr::Type const &
-RdataNS::type() const
+rr::Type const & RdataNS::type() const
 {
     return rr::Type::NS;
 }
@@ -59,7 +60,9 @@ RdataNS::klass() const
 void
 RdataNS::printOn(std::ostream & s) const
 {
-    s << *d_nsdnamep ;
+    string const * fqdnp = util::dname2fqdn(*d_nsdnamep);
+    s << *fqdnp ;
+    delete fqdnp;
 }
 
 void
@@ -79,10 +82,13 @@ RdataNS::unmarshall(char const * & offset) throw (Rdata::ExBadSyntax)
         throw Rdata::ExBadSyntax("unmarshalling error for NS RR: " + e);
     }
 
-    RdataNS const * dp;
-    dp = RdataNS::parse(*sp);
-    
+    string const * fqdnp = util::dname2fqdn(*sp);
     delete sp;
+
+    RdataNS const * dp;
+    dp = RdataNS::parse(*fqdnp);
+    delete fqdnp;
+
     return dp;
 }
 

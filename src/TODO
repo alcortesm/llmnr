@@ -8,4 +8,5 @@ read http://parashift.com/c++-faq-lite/coding-standards.html#faq-27.10 (lint-lik
 
 rdataCNAME, rdataSOA, rdataPTR
 
+FIX rr, rdataNS and rdataMX, must use fqnd instead of dnames
 code rrdb

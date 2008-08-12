@@ -66,9 +66,6 @@ util::str2sint32(string const & s) throw (string)
 bool
 util::isDomainName(string const & s)
 {
-    if (s.compare(" ") == 0)
-        return true;
-    
     if (s.size() < util::MIN_DNAME_SIZE)
         return false;
     if (s.size() > util::MAX_DNAME_SIZE)
@@ -93,6 +90,23 @@ util::isDomainName(string const & s)
     if (!isLabel(s, head, size))
        return false;
     return true;
+}
+
+bool
+util::isFQDN(string const & s)
+{
+    string sub;
+    string::size_type last;
+    string::size_type nchars;
+
+    last = s.size() - 1 ;
+    nchars = s.size();
+
+    if (s[last] != '.')
+        return false;
+
+    sub = s.substr(0, nchars-1); // strip the last char (the trailing '.')
+    return isDomainName(sub);
 }
 
 // rfc 1035 section 2.3.1
@@ -139,6 +153,20 @@ util::isLabel(string const & s, size_t head, size_t size)
 bool
 util::isLabel(string const & s) {
     return isLabel(s, 0, s.size());
+}
+
+string const *
+util::fqdn2dname(string const & fqdn)
+{
+    string * dnamep = new string(fqdn.substr(0, fqdn.size()-1));
+    return dnamep;
+}
+
+string const *
+util::dname2fqdn(string const & dname)
+{
+    string * fqdnp = new string(dname + ".");
+    return fqdnp;
 }
 
 void
